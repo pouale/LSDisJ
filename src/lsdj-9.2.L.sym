@@ -100,7 +100,15 @@
 00:01e0 MODE_TABLE
 ;; 00:01e0 gbdk 2.95 libc/gb/crt0.s:.MODE_TABLE
 ;; 00:01e0 Jump table for modes
-00:01e0 .data:0120
+00:01e0 .data:0020
+;; 00:0200 64-bytes LUT for triangle vibrato
+00:0200 .data:0040
+;; 00:0240 64-bytes LUT for saw vibrato
+00:0240 .data:0040
+;; 00:0280 64-bytes LUT for square vibrato
+00:0280 .data:0040
+00:02D0 .data:0020
+
 
 00:0300 call_multiply_1
 ;; 00:0300 Multiply register A by 1.
@@ -200,7 +208,7 @@
 
 00:0391 jump_timer_overflow
 
-00:066a call_00_066a
+00:066a call_WAV_kit_vibrato_update
 
 00:075a call_00_075a
 
@@ -255,7 +263,8 @@
 
 ;; 00:09a4 Return
 
-00:09a8 data_00_09a8
+00:09a8 multiples_of_19
+;; 00:09a8 used for drum pitch mode computations
 00:09a8 .data:d8
 
 00:0a80 call_read_instrument_param
@@ -705,21 +714,50 @@
 00:17e4 call_00_17e4
 
 00:193d call_compute_vibrato_pitch_offset
-;; 00:193d Computes the offset to the pitch due to the current vibrato.
+;; 00:193d Computes the offset to pitch due to a vibrato of shape E and current phase at A, and depth pointer at HL.
 ;; 00:193d Result: DE
 ;; 00:193d Registers used: A, DE, HL
+;; 00:1945 Look-up vibrato state in LUT starting at $0200
+00:1954 .jump_vibrato_is_positive
+;; 00:1957 jumps to routine that multiplies A by a certain integer and stores the result in HL
+00:1958 call_vibrato_is_negative
+;; 00:195c jumps to routine that multiplies A by a certain integer and stores the result in HL
 
-00:1958 call_00_1958
+00:195d call_PU1_update_slide_and_vibrato
+00:1992 .jump_PU1_upwards_slide
+00:19a1 .jump_PU1_switch_slide_direction
+00:19b5 .jump_PU1_update_vibrato
 
-00:195d call_00_195d
+00:19dd call_PU2_update_slide_and_vibrato
+00:1a12 .jump_PU2_upwards_slide
+00:1a21 .jump_PU2_switch_slide_direction
+00:1a35 .jump_PU2_update_vibrato
 
-00:19dd call_00_19dd
+00:1a5e call_update_WAV_slide_and_vibrato
+00:1a93 .jump_WAV_upwards_slide
+00:1aa2 .jump_WAV_switch_slide_direction
+00:1ab6 call_WAV_update_vibrato
 
-00:1a5e call_00_1a5e
-
-00:1ab6 call_00_1ab6
-
-00:1adf call_00_1adf
+00:1adf call_compute_pitch_period
+;; 00:1adf Computes the pitch period to be written in IO registers from note value in D and finetune value in E, using the LUT starting at adress [bc+$01][bc]
+;; 00:1adf Result: DE
+;; 00:1adf Registers used: A, BC, DE, HL
+;; 00:1ae0 check that note is in range 0-108 
+00:1ae4 .jump_valid_note_value
+;; 00:1ae5 store start of pitch LUT in HL. Most of the time, LUT will be at address $cf28, but in drum pitch mode, LUT will be at address $09a8
+00:1af0 .jump_no_carry
+00:1afa .jump_compute_finetune_pitch_period_offset
+;;00:1afa interpolates between consecutive pitch period in the pitch period LUT
+00:1b04 .jump_multiply_bit_0
+00:1b08 .jump_multiply_bit_1
+00:1b0c .jump_multiply_bit_2
+00:1b10 .jump_multiply_bit_3
+00:1b14 .jump_multiply_bit_4
+00:1b18 .jump_multiply_bit_5
+00:1b1c .jump_multiply_bit_6
+00:1b21 .jump_round_down
+00:1b2a .jump_invalid_note_value
+00:1b3b .jump_overflow_note_value
 
 00:1b58 data_00_1b58
 00:1b58 .data:0002
@@ -2147,7 +2185,7 @@
 01:40ea .data:0010
 01:40fa data_01_40fa
 01:40fa .data:00d8
-01:41d2 data_01_41d2
+01:41d2 PITCH_PERIOD_LUT_ROM
 01:41d2 .data:00d8
 01:42aa data_01_42aa
 01:42aa .data:00d8
@@ -3532,6 +3570,9 @@
 
 02:4f06 call_02_4f06
 02:4f06 .code:0084
+
+02:4f6c .jump_PU1_pitch_tick_update
+02:4f7b .jump_PU2_pitch_tick_update
 
 02:4f8a call_02_4f8a
 02:4f8a .code:007c
@@ -12423,10 +12464,9 @@
 
 00:c23c ram_00_c23c
 
-00:c248 PU1_LEGATO_NOTE_DIFFERENCE
+00:c248 PU1_LEGATO_NOTE_DIFFERENCE ;TODO: two bytes, figure out what the first byte is for 
 00:c24a PU2_LEGATO_NOTE_DIFFERENCE
 00:c24c WAV_LEGATO_NOTE_DIFFERENCE
-
 00:c250 ram_00_c250
 
 00:c2d0 PU1_SLIDE_SPEED_LOW
@@ -12482,7 +12522,6 @@
 00:c2ff LIVE_NEXT_NOI_SONG_ROW
 
 00:c300 ram_00_c300
-
 00:c304 ram_00_c304
 
 00:c308 PU1_VIBRATO_PHASE_LOW
@@ -12491,24 +12530,22 @@
 00:c30b PU1_VIBRATO_PHASE_HIGH
 00:c30c WAV_VIBRATO_PHASE_LOW
 00:c30d WAV_VIBRATO_PHASE_HIGH
-
-00:c30e ram_00_c30e
-00:c30f ram_00_c30f
+00:c30e NOI_VIBRATO_PHASE_LOW
+00:c30f NOI_VIBRATO_PHASE_HIGH
 
 00:c310 PU1_VIBRATO_SHAPE
 00:c311 PU2_VIBRATO_SHAPE
 00:c312 WAV_VIBRATO_SHAPE
-00:c313 ram_00_c313
+00:c313 NOI_VIBRATO_SHAPE
 
-00:c314 ram_00_c314
-00:c315 ram_00_c315
-00:c316 ram_00_c316
-00:c317 ram_00_c317
-
-00:c318 ram_00_c318
-00:c319 ram_00_c319
-00:c31a ram_00_c31a
-00:c31b ram_00_c31b
+00:c314 PU1_VIBRATO_SPEED_LOW
+00:c315 PU1_VIBRATO_SPEED_HIGH
+00:c316 PU2_VIBRATO_SPEED_LOW
+00:c317 PU2_VIBRATO_SPEED_HIGH
+00:c318 WAV_VIBRATO_SPEED_LOW
+00:c319 WAV_VIBRATO_SPEED_HIGH
+00:c31a NOI_VIBRATO_SPEED_LOW
+00:c31b NOI_VIBRATO_SPEED_HIGH
 
 00:c31c PU1_VIBRATO_FINETUNE_OFFSET
 00:c31d PU1_VIBRATO_NOTE_OFFSET
@@ -12520,8 +12557,7 @@
 00:c324 PU1_VIBRATO_DEPTH
 00:c325 PU2_VIBRATO_DEPTH
 00:c326 WAV_VIBRATO_DEPTH
-
-00:c327 ram_00_c327
+00:c327 NOI_VIBRATO_DEPTH
 
 00:c328 ram_00_c328
 00:c329 ram_00_c329
@@ -12569,10 +12605,9 @@
 
 00:c34c ram_00_c34c
 00:c34d ram_00_c34d
-00:c34e ram_00_c34e
-00:c34f ram_00_c34f
-
-00:c350 ram_00_c350
+00:c34e PU1_TICK_FINETUNE_OFFSET
+00:c34f PU2_TICK_FINETUNE_OFFSET
+00:c350 WAV_TICK_FINETUNE_OFFSET
 
 00:c352 ram_00_c352
 
@@ -12582,19 +12617,18 @@
 
 00:c355 ram_00_c355
 
-00:c356 ram_00_c356
-
-00:c358 ram_00_c358
-
-00:c35a ram_00_c35a
+00:c356 PU1_PITCH_LUT_ADDRESS
+00:c358 PU2_PITCH_LUT_ADDRESS
+00:c35a WAV_PITCH_LUT_ADDRESS
 
 00:c35c ram_00_c35c
 00:c35d ram_00_c35d
 00:c35e ram_00_c35e
-00:c35f ram_00_c35f
 
-00:c360 ram_00_c360
-00:c361 ram_00_c361
+00:c35f PU1_PITCH_TICK_MODE
+00:c360 PU2_PITCH_TICK_MODE
+00:c361 WAV_PITCH_TICK_MODE
+
 00:c362 ram_00_c362
 00:c363 ram_00_c363
 
@@ -12628,11 +12662,9 @@
 00:c3b7 WAV_GROOVE_3
 00:c3b8 NOI_GROOVE_3
 
-00:c3f9 ram_00_c3f9
-
-00:c3fa ram_00_c3fa
-
-00:c3fb ram_00_c3fb
+00:c3f9 PU1_PITCH_HF_EVENT
+00:c3fa PU2_PITCH_HF_EVENT
+00:c3fb WAV_PITCH_HF_EVENT
 
 00:c3fc CURRENT_TRANSPOSES
 00:c3fc CURRENT_PU1_TRANSPOSE
@@ -12864,18 +12896,18 @@
 00:c4f2 ram_00_c4f2
 00:c4f3 ram_00_c4f3
 
-00:c4f4 ram_00_c4f4
-00:c4f5 ram_00_c4f5
+00:c4f4 KIT_1_BANK
+00:c4f5 KIT_2_BANK
 00:c4f6 ram_00_c4f6
 00:c4f7 ram_00_c4f7
-
 00:c4f8 ram_00_c4f8
 00:c4f9 ram_00_c4f9
-00:c4fa ram_00_c4fa
-00:c4fb ram_00_c4fb
 
-00:c4fc ram_00_c4fc
-00:c4fd ram_00_c4fd
+00:c4fa KIT_1_CHUNK_ADDRESS_LOW
+00:c4fb KIT_1_CHUNK_ADDRESS_HIGH
+00:c4fc KIT_2_CHUNK_ADDRESS_LOW
+00:c4fd KIT_2_CHUNK_ADDRESS_HIGH
+
 00:c4fe ram_00_c4fe
 00:c4ff ram_00_c4ff
 
@@ -13568,7 +13600,7 @@
 00:ce00 KEY_BUFFER
 ;; 00:ce00 A buffer of the last pressed keys (up to 0xceff)
 
-00:cf28 ram_00_cf28
+00:cf28 PITCH_PERIOD_LUT_WRAM
 
 00:ff80 REFRESH_OAM
 ;; 00:ff80 gbdk 2.95 libc/gb/global.s:refresh_OAM
