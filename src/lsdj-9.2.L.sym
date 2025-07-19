@@ -207,9 +207,29 @@
 
 00:0391 jump_timer_overflow
 00:03a6 .jump_update_sound_HF
-00:0581 .jump_PU1_update_HF
-00:058d .jump_PU2_update_HF
-00:0599 .jump_WAV_update_HF
+00:03d5 .jump_kit1_update_HF
+00:03f7 .jump_kit1_sample_end
+00:0406 .jump_kit1_sample_loop
+00:0411 .jump_kit1_sample_update
+00:045c .jump_kit2_update_HF
+00:047b .jump_kit2_sample_end
+00:048a .jump_kit2_sample_loop
+00:0495 .jump_kit_check_if_mix_is_needed
+00:04ba .jump_kit_mix_chunks
+;; 00:04be iterated copy of the routine at address $4000 in bank $01b, adds two arrays of 32 4-bit values
+00:04c3 .jump_kit2_sample_update
+00:0513 .jump_wav_kit_write_to_registers
+00:0581 .jump_PU1_update_pitch_HF
+00:058d .jump_PU2_update_pitch_HF
+00:0599 .jump_WAV_update_pitch_HF
+00:05aa .jump_WAV_update_pitch_is_not_kit
+00:05b0 .jump_PU1_update_resync
+00:05ce .jump_PU2_update_resync
+00:05ea .jump_WAV_update_resync
+00:05fd .jump_NOI_update_resync
+00:0616 .jump_PU1_update_envelope
+00:0623 .jump_PU2_update_envelope
+00:0630 .jump_NOI_update_envelope
 00:0649 .jump_is_timer_overflow_tick
 00:065f .jump_pop_and_return_timer_overflow
 00:0662 .jump_return_timer_overflow
@@ -4414,8 +4434,8 @@
 
 02:7c6c jump_table_02_7c6c
 
-;; 02:7cb9:op LOW(ram_00_c2d8)
-;; 02:7cbd:op HIGH(ram_00_c2d8)
+;; 02:7cb9:op LOW(PU1_VOLUME_ENVELOPE)
+;; 02:7cbd:op HIGH(PU1_VOLUME_ENVELOPE)
 
 02:7cd0 data_02_7cd0
 02:7cd0 .data:012b
@@ -12327,15 +12347,15 @@
 00:c146 PLAYING_NOI_PHRASE_INSTRUMENT_ADDRESS_LOW
 00:c147 PLAYING_NOI_PHRASE_INSTRUMENT_ADDRESS_HIGH
 
-00:c148 ram_00_c148
-00:c149 ram_00_c149
-00:c14a ram_00_c14a
-00:c14b ram_00_c14b
+00:c148 PU1_RESYNC_PHASE
+00:c149 PU2_RESYNC_PHASE
+00:c14a WAV_RESYNC_PHASE
+00:c14b NOI_RESYNC_PHASE
 
-00:c14c ram_00_c14c
-00:c14d ram_00_c14d
-00:c14e ram_00_c14e
-00:c14f ram_00_c14f
+00:c14c PU1_RESYNC_SPEED
+00:c14d PU2_RESYNC_SPEED
+00:c14e WAV_RESYNC_SPEED
+00:c14f NOI_RESYNC_SPEED
 
 00:c150 CHANNEL_GROOVES_1
 00:c150 PU1_GROOVE_1
@@ -12487,24 +12507,19 @@
 00:c2d4 WAV_SLIDE_SPEED_LOW
 00:c2d5 WAV_SLIDE_SPEED_LOW
 
-00:c2d8 ram_00_c2d8
-
-00:c2d9 ram_00_c2d9
-
-00:c2da ram_00_c2da
-
-00:c2db ram_00_c2db
+00:c2d8 PU1_VOLUME_ENVELOPE
+00:c2d9 PU2_VOLUME_ENVELOPE
+00:c2da WAV_OUTPUT_LEVEL
+00:c2db NOI_VOLUME_ENVELOPE
 
 00:c2dc PU1_DUTY_AND_TIMER
 00:c2dd PU2_DUTY_AND_TIMER
 
-00:c2e0 ram_00_c2e0
+00:c2e0 PU1_TIMER_CONTROL
+00:c2e1 PU2_TIMER_CONTROL
+00:c2e3 NOI_TIMER_CONTROL
 
-00:c2e1 ram_00_c2e1
-
-00:c2e3 ram_00_c2e3
-
-00:c2e4 ram_00_c2e4
+00:c2e4 PU1_SWEEP
 
 00:c2e7 ram_00_c2e7
 
@@ -12869,11 +12884,10 @@
 00:c4d3 ram_00_c4d3
 
 00:c4d4 ram_00_c4d4
-00:c4d5 KIT_1_CHUNK_ADDRESS_COPY_LOW
-00:c4d6 KIT_1_CHUNK_ADDRESS_COPY_HIGH
-00:c4d7 ram_00_c4d7
-
-00:c4d8 ram_00_c4d8
+00:c4d5 KIT_1_SAMPLE_ADDRESS_START_LOW
+00:c4d6 KIT_1_SAMPLE_ADDRESS_START_HIGH
+00:c4d7 KIT_1_SAMPLE_ADDRESS_END_LOW
+00:c4d8 KIT_1_SAMPLE_ADDRESS_END_HIGH
 00:c4d9 ram_00_c4d9
 00:c4da ram_00_c4da
 00:c4db ram_00_c4db
@@ -12907,12 +12921,11 @@
 00:c4f1 ram_00_c4f1
 00:c4f2 ram_00_c4f2
 00:c4f3 ram_00_c4f3
-
 00:c4f4 ram_00_c4f4
-00:c4f5 KIT_1_BANK
-00:c4f6 KIT_2_BANK
-00:c4f7 ram_00_c4f7
-00:c4f8 ram_00_c4f8
+00:c4f5 KIT_1_LATEST_BANK
+00:c4f6 KIT_2_LATEST_BANK
+00:c4f7 KIT_1_ACTIVE_BANK
+00:c4f8 KIT_2_ACTIVE_BANK
 00:c4f9 ram_00_c4f9
 
 00:c4fa KIT_1_CHUNK_ADDRESS_LOW
@@ -13158,7 +13171,7 @@
 00:c8f2 ram_00_c8f2
 00:c8f3 ram_00_c8f3
 
-00:c8f4 ram_00_c8f4
+00:c8f4 KIT_IS_PLAYING
 00:c8f5 ram_00_c8f5
 00:c8f6 ram_00_c8f6
 00:c8f7 ram_00_c8f7
