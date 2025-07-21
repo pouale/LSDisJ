@@ -207,6 +207,7 @@
 
 00:0391 jump_timer_overflow
 00:03a6 .jump_update_sound_HF
+00:03c4 .jump_set_oscilloscope_clear
 00:03d5 .jump_kit1_update_HF
 00:03f7 .jump_kit1_sample_end
 00:0406 .jump_kit1_sample_loop
@@ -233,10 +234,21 @@
 00:0649 .jump_is_timer_overflow_tick
 00:065f .jump_pop_and_return_timer_overflow
 00:0662 .jump_return_timer_overflow
-
 00:066a call_WAV_kit_vibrato_update
-
-00:075a call_00_075a
+00:069d .jump_silky_WAV_update
+00:06af .jump_is_double_speed
+;; 00:06b0 HL contains time elapsed since last cycle, in units of 64 CPU cycles
+;; 00:06c5 BC represents the period of the wav channel note, in units of 64 CPU cycles
+00:06ec .jump_period_over_255
+00:06f3 .jump_next_period
+00:06fc .jump_current_phase_greater_than_period
+00:0704 .jump_current_phase_smaller_than_period
+00:070a .jump_if_period_is_0
+;; 00:071b BC represents time difference between current phase and period, in units of 64 CPU cycles 
+00:0732 .jump_convert_to_DMG_div_cycles
+00:0745 .jump_check_div_value
+00:0749 .jump_wait_for_div_sync_frame
+00:075a call_update_synth_frame
 
 00:07d2 call_00_07d2
 00:07d2 .code:004a
@@ -2214,9 +2226,9 @@
 
 01:40ea data_default_wave_frame_1
 01:40ea .data:0010
-01:40fa data_01_40fa
+01:40fa PITCH_PERIOD_LUT_ROM
 01:40fa .data:00d8
-01:41d2 PITCH_PERIOD_LUT_ROM
+01:41d2 PITCH_PERIOD_SGB_LUT_ROM
 01:41d2 .data:00d8
 01:42aa data_01_42aa
 01:42aa .data:00d8
@@ -12656,9 +12668,9 @@
 00:c361 WAV_PITCH_TICK_MODE
 
 00:c362 ram_00_c362
-00:c363 ram_00_c363
 
-00:c364 ram_00_c364
+00:c363 WAV_FRAME_CURRENT_PHASE_LOW
+00:c364 WAV_FRAME_CURRENT_PHASE_HIGH
 
 00:c365 ram_00_c365
 
@@ -12698,15 +12710,15 @@
 00:c3fe CURRENT_WAV_TRANSPOSE
 00:c3ff CURRENT_NOI_TRANSPOSE
 
-00:c400 ram_00_c400
+00:c400 DIV_VALUE_PREVIOUS_CYCLE
 
 00:c401 GBC_TIMA_MODULO_2
 ;; 00:c401 since timer interrupt is called twice as often on gbc, it flips this bit each time and skips HF routines half of the time
 
 00:c402 CURRENT_SCREEN
 
-00:c403 DMG_SOUND_ON
-;; 00:c403 Indicates if sound was on at startup for DMG
+00:c403 IS_SGB
+;; 00:c403 Checks if current hardware is SGB by checking value of register NR52 on startup (sound on)
 
 00:c404 ram_00_c404
 
@@ -12888,11 +12900,10 @@
 00:c4d6 KIT_1_SAMPLE_ADDRESS_START_HIGH
 00:c4d7 KIT_1_SAMPLE_ADDRESS_END_LOW
 00:c4d8 KIT_1_SAMPLE_ADDRESS_END_HIGH
-00:c4d9 ram_00_c4d9
-00:c4da ram_00_c4da
-00:c4db ram_00_c4db
-
-00:c4dc ram_00_c4dc
+00:c4d9 KIT_2_SAMPLE_ADDRESS_START_LOW
+00:c4da KIT_2_SAMPLE_ADDRESS_START_HIGH
+00:c4db KIT_2_SAMPLE_ADDRESS_END_LOW
+00:c4dc KIT_2_SAMPLE_ADDRESS_END_HIGH
 00:c4dd ram_00_c4dd
 00:c4de ram_00_c4de
 00:c4df ram_00_c4df
@@ -12903,8 +12914,8 @@
 00:c4e3 ram_00_c4e3
 
 00:c4e4 ram_00_c4e4
-00:c4e5 ram_00_c4e5
-00:c4e6 ram_00_c4e6
+00:c4e5 KIT_1_SAMPLE_LOOPS
+00:c4e6 KIT_2_SAMPLE_LOOPS
 00:c4e7 ram_00_c4e7
 
 00:c4e8 ram_00_c4e8
@@ -13057,7 +13068,7 @@
 
 00:c69a ram_00_c69a
 
-00:c69b ram_00_c69b
+00:c69b WAV_SYNTH_FRAME_HAS_ADVANCED
 
 00:c69c ram_00_c69c
 
