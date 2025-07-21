@@ -1526,7 +1526,7 @@
 ;; 00:2f4f Write byte to VRAM
 ;; 00:2f50 Increment target
 
-00:2f58 .jump_decrease_envelope_volume
+00:2f58 jump_decrease_envelope_volume
 ;; 00:2f59 zombie mode behavior: this series of writes increases volume by 1
 00:2f63 call_update_envelope_volume_register_zombie_mode
 ;; 00:2f6a zombie mode behavior: writing $08 while bits 0-2 are set to 0 increases volume by 1
@@ -3527,8 +3527,8 @@
 02:494d call_02_494d
 02:494d .code:023d
 
-;; 02:49d6:op LOW(ram_00_cf28)
-;; 02:49da:op HIGH(ram_00_cf28)
+;; 02:49d6:op LOW(PITCH_PERIOD_LUT_WRAM)
+;; 02:49da:op HIGH(PITCH_PERIOD_LUT_WRAM)
 
 02:4b8a call_write_current_channel_chain_transpose
 ;; 02:4b8a Write the current transpose for the playing channel chain row.
@@ -3974,11 +3974,11 @@
 ;; 02:625f:op LOW(PU1_PITCH_PERIOD_LOW)
 ;; 02:6263:op HIGH(PU1_PITCH_PERIOD_LOW)
 
-;; 02:62ac:op LOW(ram_00_c337)
-;; 02:62b0:op HIGH(ram_00_c337)
+;; 02:62ac:op LOW(PU1_SLIDE_FINETUNE_OFFSET)
+;; 02:62b0:op HIGH(PU1_SLIDE_FINETUNE_OFFSET)
 
-;; 02:62e3:op LOW(ram_00_c34e)
-;; 02:62e7:op HIGH(ram_00_c34e)
+;; 02:62e3:op LOW(PU1_TICK_FINETUNE_OFFSET)
+;; 02:62e7:op HIGH(PU1_TICK_FINETUNE_OFFSET)
 
 02:6441 call_rand_char_range
 ;; 02:6441 Get a random char between 0 and a value.
@@ -3997,11 +3997,11 @@
 ;; 02:647c:op LOW(ram_00_c8c5)
 ;; 02:6480:op HIGH(ram_00_c8c5)
 
-;; 02:6497:op LOW(ram_00_c148)
-;; 02:649b:op HIGH(ram_00_c148)
+;; 02:6497:op LOW(PU1_RESYNC_PHASE)
+;; 02:649b:op HIGH(PU1_RESYNC_PHASE)
 
-;; 02:64a3:op LOW(ram_00_c14c)
-;; 02:64a7:op HIGH(ram_00_c14c)
+;; 02:64a3:op LOW(PU1_RESYNC_SPEED)
+;; 02:64a7:op HIGH(PU1_RESYNC_SPEED)
 
 ;; 02:64c4:op LOW(ram_00_c8c5)
 ;; 02:64c8:op HIGH(ram_00_c8c5)
@@ -4029,8 +4029,8 @@
 ;; 02:6568:op LOW(ram_00_c2f0)
 ;; 02:656c:op HIGH(ram_00_c2f0)
 
-;; 02:6578:op LOW(ram_00_c2d0)
-;; 02:657c:op HIGH(ram_00_c2d0)
+;; 02:6578:op LOW(PU1_SLIDE_SPEED_LOW)
+;; 02:657c:op HIGH(PU1_SLIDE_SPEED_LOW)
 
 ;; 02:6589:op LOW(PLAYING_TABLES)
 ;; 02:658d:op HIGH(PLAYING_TABLES)
@@ -4041,8 +4041,8 @@
 ;; 02:65a1:op LOW(ram_00_c218)
 ;; 02:65a5:op HIGH(ram_00_c218)
 
-;; 02:65ad:op LOW(ram_00_c35f)
-;; 02:65b1:op HIGH(ram_00_c35f)
+;; 02:65ad:op LOW(PU1_PITCH_TICK_MODE)
+;; 02:65b1:op HIGH(PU1_PITCH_TICK_MODE)
 
 02:65bb call_02_65bb
 02:65bb .code:0053
@@ -4089,8 +4089,8 @@
 ;; 02:6732:op LOW(ram_00_c2ec)
 ;; 02:6736:op HIGH(ram_00_c2ec)
 
-;; 02:6748:op LOW(ram_00_c2e4)
-;; 02:674c:op HIGH(ram_00_c2e4)
+;; 02:6748:op LOW(PU1_SWEEP)
+;; 02:674c:op HIGH(PU1_SWEEP)
 
 ;; 02:676f:op LOW(ram_00_c8cd)
 ;; 02:6773:op HIGH(ram_00_c8cd)
@@ -12541,7 +12541,7 @@
 00:c2d2 PU2_SLIDE_SPEED_LOW
 00:c2d3 PU2_SLIDE_SPEED_HIGH
 00:c2d4 WAV_SLIDE_SPEED_LOW
-00:c2d5 WAV_SLIDE_SPEED_LOW
+00:c2d5 WAV_SLIDE_SPEED_HIGH
 
 00:c2d8 PU1_VOLUME_ENVELOPE
 00:c2d9 PU2_VOLUME_ENVELOPE
@@ -12589,7 +12589,7 @@
 00:c308 PU1_VIBRATO_PHASE_LOW
 00:c309 PU1_VIBRATO_PHASE_HIGH
 00:c30a PU2_VIBRATO_PHASE_LOW
-00:c30b PU1_VIBRATO_PHASE_HIGH
+00:c30b PU2_VIBRATO_PHASE_HIGH
 00:c30c WAV_VIBRATO_PHASE_LOW
 00:c30d WAV_VIBRATO_PHASE_HIGH
 00:c30e NOI_VIBRATO_PHASE_LOW
