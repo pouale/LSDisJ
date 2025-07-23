@@ -233,12 +233,13 @@
 00:0616 .jump_PU1_update_envelope
 00:0623 .jump_PU2_update_envelope
 00:0630 .jump_NOI_update_envelope
-00:063d .jr_00_063d
+00:063d .jump_update_sound_HF_done
 00:0649 .jump_is_timer_overflow_tick
+
 00:065f jump_pop_and_return_timer_overflow
 00:0662 jump_return_timer_overflow
 
-00:066a call_WAV_kit_vibrato_update
+00:066a call_WAV_kit_advance_slide_and_vibrato
 
 00:069d jump_silky_WAV_update
 00:06af .jump_is_double_speed
@@ -767,20 +768,20 @@
 00:1958 call_vibrato_is_negative
 ;; 00:195c jumps to routine that multiplies A by a certain integer and stores the result in HL
 
-00:195d call_PU1_update_slide_and_vibrato
+00:195d call_PU1_advance_slide_and_vibrato
 00:1992 .jump_PU1_upwards_slide
 00:19a1 .jump_PU1_switch_slide_direction
-00:19b5 .jump_PU1_update_vibrato
+00:19b5 .jump_PU1_advance_vibrato
 
-00:19dd call_PU2_update_slide_and_vibrato
+00:19dd call_PU2_advance_slide_and_vibrato
 00:1a12 .jump_PU2_upwards_slide
 00:1a21 .jump_PU2_switch_slide_direction
-00:1a35 .jump_PU2_update_vibrato
+00:1a35 .jump_PU2_advance_vibrato
 
-00:1a5e call_update_WAV_slide_and_vibrato
+00:1a5e call_WAV_advance_slide_and_vibrato
 00:1a93 .jump_WAV_upwards_slide
 00:1aa2 .jump_WAV_switch_slide_direction
-00:1ab6 call_WAV_update_vibrato
+00:1ab6 call_WAV_advance_vibrato
 
 00:1adf call_compute_pitch_period
 ;; 00:1adf Computes the pitch period to be written in IO registers from note value in D and finetune value in E, using the LUT starting at adress [bc+$01][bc]
@@ -3635,11 +3636,17 @@
 ;; 02:4f01 Exit conditions: HL = end_address
 ;; 02:4f01 Registers used: A, HL
 
-02:4f06 call_02_4f06
+02:4f06 call_update_chord_current_channel
 02:4f06 .code:0084
-
+02:4f2d .jump_chord_stage_1
+02:4f39 .jump_chord_stage_2
+02:4f47 .jump_chord_stage_2_is_0
+;; 02:4f47 when stage 2 is 0, the chord loops between 2 tones instead of 3
+02:4f48 .jump_end_chord_stage_2
+02:4f4e jump_update_pitch_tick_current_channel
 02:4f6c .jump_PU1_pitch_tick_update
 02:4f7b .jump_PU2_pitch_tick_update
+
 
 02:4f8a call_02_4f8a
 02:4f8a .code:007c
@@ -3671,8 +3678,10 @@
 
 ;; 02:5013 Return
 
-02:5014 call_02_5014
+02:5014 call_advance_tick_pitch_events_current_channel
 02:5014 .code:002a
+02:5023 .jump_cmd_rate_timer_is_0
+02:5038 .jump_chord_in_noise_channel
 
 02:503e call_generate_random_byte_under_15
 ;; 02:503e Generate a random byte between 0 and 14.
@@ -3720,16 +3729,23 @@
 ;; 02:512b Return
 ;; 02:512b:op rRAMG
 
-02:512f call_02_512f
+02:512f call_advance_step_table_current_instrument
 02:512f .code:01e0
+02:5150 .jump_table_mode_tick
+02:515f .jump_table_volume_column
 ;; 02:517f:op rRAMB
 ;; 02:5182:op CART_SRAM_ENABLE
 ;; 02:5185:op rRAMG
 ;; 02:518a:op rRAMG
 ;; 02:521d:op rRAMB
 
-02:530f call_02_530f
+02:530f call_update_pitch_tick
 02:530f .code:0114
+02:533c .jump_WAV_update_pitch_tick
+02:535e .jump_PU1_check_update_pitch_tick
+02:538a .jump_PU1_update_pitch_registers_tick
+02:53a6 .jump_PU2_check_update_pitch_tick
+02:53d3 .jump_PU2_update_pitch_registers_tick
 
 02:5423 call_write_current_channel_current_note_from_phrase
 ;; 02:5423 Write the current note for the current channel from the phrase.
@@ -3977,8 +3993,8 @@
 ;; 02:62ac:op LOW(PU1_SLIDE_FINETUNE_OFFSET)
 ;; 02:62b0:op HIGH(PU1_SLIDE_FINETUNE_OFFSET)
 
-;; 02:62e3:op LOW(PU1_TICK_FINETUNE_OFFSET)
-;; 02:62e7:op HIGH(PU1_TICK_FINETUNE_OFFSET)
+;; 02:62e3:op LOW(PU1_TICK_PITCH_UPDATE_FLAG)
+;; 02:62e7:op HIGH(PU1_TICK_PITCH_UPDATE_FLAG)
 
 02:6441 call_rand_char_range
 ;; 02:6441 Get a random char between 0 and a value.
@@ -3994,8 +4010,8 @@
 02:6465 call_02_6465
 02:6465 .code:00da
 
-;; 02:647c:op LOW(ram_00_c8c5)
-;; 02:6480:op HIGH(ram_00_c8c5)
+;; 02:647c:op LOW(PU1_CMD_RATE)
+;; 02:6480:op HIGH(PU1_CMD_RATE)
 
 ;; 02:6497:op LOW(PU1_RESYNC_PHASE)
 ;; 02:649b:op HIGH(PU1_RESYNC_PHASE)
@@ -4003,8 +4019,8 @@
 ;; 02:64a3:op LOW(PU1_RESYNC_SPEED)
 ;; 02:64a7:op HIGH(PU1_RESYNC_SPEED)
 
-;; 02:64c4:op LOW(ram_00_c8c5)
-;; 02:64c8:op HIGH(ram_00_c8c5)
+;; 02:64c4:op LOW(PU1_CMD_RATE)
+;; 02:64c8:op HIGH(PU1_CMD_RATE)
 
 ;; 02:64e0:op LOW(ram_00_c8cd)
 ;; 02:64e4:op HIGH(ram_00_c8cd)
@@ -4038,8 +4054,8 @@
 ;; 02:6595:op LOW(ram_00_c420)
 ;; 02:6599:op HIGH(ram_00_c420)
 
-;; 02:65a1:op LOW(ram_00_c218)
-;; 02:65a5:op HIGH(ram_00_c218)
+;; 02:65a1:op LOW(PU1_CURRENT_CHORD)
+;; 02:65a5:op HIGH(PU1_CURRENT_CHORD)
 
 ;; 02:65ad:op LOW(PU1_PITCH_TICK_MODE)
 ;; 02:65b1:op HIGH(PU1_PITCH_TICK_MODE)
@@ -4101,7 +4117,7 @@
 ;; 02:6796:op LOW(ram_00_c23c)
 ;; 02:679a:op HIGH(ram_00_c23c)
 
-02:6809 call_02_6809
+02:6809 call_NOI_update_chord
 
 02:683d jump_table_02_683d
 
@@ -6817,17 +6833,17 @@
 ;; 05:49e9:op LOW(ram_00_c0bc)
 ;; 05:49ed:op HIGH(ram_00_c0bc)
 
-;; 05:4a16:op LOW(ram_00_c33f)
-;; 05:4a1a:op HIGH(ram_00_c33f)
+;; 05:4a16:op LOW(PU1_TABLE_STEP_MODE)
+;; 05:4a1a:op HIGH(PU1_TABLE_STEP_MODE)
 
 ;; 05:4a2a:op LOW(CURRENT_INSTRS)
 ;; 05:4a2e:op HIGH(CURRENT_INSTRS)
 
-;; 05:4a35:op LOW(ram_00_c250)
-;; 05:4a39:op HIGH(ram_00_c250)
+;; 05:4a35:op LOW(INSTRUMENTS_TABLE_STEP_POSITION_1)
+;; 05:4a39:op HIGH(INSTRUMENTS_TABLE_STEP_POSITION_1)
 
-;; 05:4a46:op LOW(ram_00_c250)
-;; 05:4a4a:op HIGH(ram_00_c250)
+;; 05:4a46:op LOW(INSTRUMENTS_TABLE_STEP_POSITION_1)
+;; 05:4a4a:op HIGH(INSTRUMENTS_TABLE_STEP_POSITION_1)
 
 ;; 05:4a59:op LOW(PLAYING_TABLE_ROWS_1)
 ;; 05:4a5d:op HIGH(PLAYING_TABLE_ROWS_1)
@@ -8379,8 +8395,10 @@
 07:5d9a .code:0071
 
 07:5e0b data_tempo_to_tick_length_LUT
+;; 07:5e0b Table of 16 bit values. One value is number of HF cycles per tick at a given tempo, times 2048
 07:5e0b .data:0200
-07:600b data_07_600b
+07:600b data_tempo_to_tick_length_SGB_LUT
+;; 07:5e0b Table of 16 bit values. See previous one, longer values to account for higher CPU speed
 07:600b .data:0200
 
 07:620b call_07_620b
@@ -12458,9 +12476,9 @@
 00:c172 PLAYING_WAV_CHAIN
 00:c173 PLAYING_NOI_CHAIN
 
-00:c174 PU1_TABLE_TRANSPOSE
-00:c175 PU2_TABLE_TRANSPOSE
-00:c176 WAV_TABLE_TRANSPOSE
+00:c174 PU1_TABLE_AND_CHORD_TRANSPOSE
+00:c175 PU2_TABLE_AND_CHORD_TRANSPOSE
+00:c176 WAV_TABLE_AND_CHORD_TRANSPOSE
 
 00:c178 ram_00_c178
 
@@ -12510,15 +12528,15 @@
 
 00:c214 ram_00_c214
 
-00:c218 ram_00_c218
-00:c219 ram_00_c219
-00:c21a ram_00_c21a
-00:c21b ram_00_c21b
+00:c218 PU1_CURRENT_CHORD
+00:c219 PU2_CURRENT_CHORD
+00:c21a WAV_CURRENT_CHORD
+00:c21b NOI_CURRENT_CHORD
 
-00:c21c ram_00_c21c
-00:c21d ram_00_c21d
-00:c21e ram_00_c21e
-00:c21f ram_00_c21f
+00:c21c PU1_CHORD_STAGE
+00:c21d PU2_CHORD_STAGE
+00:c21e NOI_CHORD_STAGE
+00:c21f WAV_CHORD_STAGE
 
 00:c220 ram_00_c220
 00:c221 ram_00_c221
@@ -12534,7 +12552,11 @@
 00:c248 PU1_LEGATO_NOTE_DIFFERENCE ;TODO: two bytes, figure out what the first byte is for 
 00:c24a PU2_LEGATO_NOTE_DIFFERENCE
 00:c24c WAV_LEGATO_NOTE_DIFFERENCE
-00:c250 ram_00_c250
+
+00:c250 INSTRUMENTS_TABLE_STEP_POSITION_1
+;;00:c250 Each byte corresponds to the step advance of the first column of the table in corresponding instrument
+00:c290 INSTRUMENTS_TABLE_STEP_POSITION_2
+;;00:c290 Each byte corresponds to the step advance of the second column of the table in corresponding instrument 
 
 00:c2d0 PU1_SLIDE_SPEED_LOW
 00:c2d1 PU1_SLIDE_SPEED_HIGH
@@ -12647,29 +12669,27 @@
 00:c33b WAV_SLIDE_FINETUNE_OFFSET
 00:c33c WAV_SLIDE_NOTE_OFFSET
 
-00:c33f ram_00_c33f
+00:c33f PU1_TABLE_STEP_MODE
+00:c340 PU2_TABLE_STEP_MODE
+00:c341 WAV_TABLE_STEP_MODE
+00:c342 NOI_TABLE_STEP_MODE
 
-00:c340 ram_00_c340
-00:c341 ram_00_c341
-00:c342 ram_00_c342
-00:c343 ram_00_c343
+00:c343 PU1_CHORD_TRANSPOSE
+00:c344 PU2_CHORD_TRANSPOSE
+00:c345 WAV_CHORD_TRANSPOSE
 
-00:c344 ram_00_c344
+00:c347 PU1_TABLE_TRANSPOSE
+00:c348 PU2_TABLE_TRANSPOSE
+00:c349 WAV_TABLE_TRANSPOSE
 
-00:c345 ram_00_c345
-
-00:c347 ram_00_c347
-
-00:c348 ram_00_c348
-00:c349 ram_00_c349
 00:c34a ram_00_c34a
 00:c34b ram_00_c34b
 
 00:c34c ram_00_c34c
 00:c34d ram_00_c34d
-00:c34e PU1_TICK_FINETUNE_OFFSET
-00:c34f PU2_TICK_FINETUNE_OFFSET
-00:c350 WAV_TICK_FINETUNE_OFFSET
+00:c34e PU1_TICK_PITCH_UPDATE_FLAG
+00:c34f PU2_TICK_PITCH_UPDATE_FLAG
+00:c350 WAV_TICK_PITCH_UPDATE_FLAG
 
 00:c352 ram_00_c352
 
@@ -13155,16 +13175,16 @@
 00:c8c3 ram_00_c8c3
 
 00:c8c4 ram_00_c8c4
-00:c8c5 ram_00_c8c5
-00:c8c6 ram_00_c8c6
-00:c8c7 ram_00_c8c7
 
-00:c8c8 ram_00_c8c8
-00:c8c9 ram_00_c8c9
-00:c8ca ram_00_c8ca
-00:c8cb ram_00_c8cb
+00:c8c5 PU1_CMD_RATE
+00:c8c6 PU2_CMD_RATE
+00:c8c7 WAV_CMD_RATE
+00:c8c8 NOI_CMD_RATE
 
-00:c8cc ram_00_c8cc
+00:c8c9 PU1_CMD_RATE_COUNTDOWN_TIMER
+00:c8ca PU2_CMD_RATE_COUNTDOWN_TIMER
+00:c8cb WAV_CMD_RATE_COUNTDOWN_TIMER
+00:c8cc NOI_CMD_RATE_COUNTDOWN_TIMER
 
 00:c8cd ram_00_c8cd
 
@@ -13191,9 +13211,9 @@
 
 00:c8e6 ram_00_c8e6
 
-00:c8e8 ram_00_c8e8
+00:c8e8 CURRENT_CHANNEL_TABLE_ROW_COL_1_ADDRESS
 
-00:c8ee ram_00_c8ee
+00:c8ee CURRENT_CHANNEL_TABLE_VOL_COUNTDOWN_ADDRESS
 
 00:c8ea CURRENT_CHANNEL_PLAYING_PHRASE_ADDRESS
 ;; 00:c8ea The address of the currently playing phrase for the current channel
@@ -13204,15 +13224,14 @@
 00:c8f0 ram_00_c8f0
 00:c8f1 ram_00_c8f1
 00:c8f2 ram_00_c8f2
-00:c8f3 ram_00_c8f3
-
+00:c8f3 KIT_IS_PLAYING_TICK
 00:c8f4 KIT_IS_PLAYING
 00:c8f5 ram_00_c8f5
 00:c8f6 ram_00_c8f6
 00:c8f7 ram_00_c8f7
 
 00:c8f8 ram_00_c8f8
-00:c8f9 ram_00_c8f9
+00:c8f9 CURRENT_TABLE_MODE
 00:c8fa ram_00_c8fa
 00:c8fc ram_00_c8fc
 
@@ -13303,8 +13322,8 @@
 00:c952 TICK_LENGTH_LOW
 00:c953 TICK_LENGTH_HIGH
 
-00:c954 TICK_CURRENT_MODULO_HIGH
-00:c955 TICK_CURRENT_MODULO_LOW
+00:c954 TICK_LENGTH_TIMER_LOW
+00:c955 TICK_LENGTH_TIMER_HIGH
 00:c956 ram_00_c956
 00:c957 ram_00_c957
 
