@@ -209,6 +209,7 @@
 00:03a6 .jump_update_sound_HF
 00:03bd .jr_00_03bd
 00:03c4 .jump_set_oscilloscope_clear
+;; 00:03c5:op rNR30
 00:03d5 .jump_kit1_update_HF
 00:03f7 .jump_kit1_sample_end
 00:0406 .jump_kit1_sample_loop
@@ -221,15 +222,31 @@
 ;; 00:04be iterated copy of the routine at address $4000 in bank $01b, adds two arrays of 32 4-bit values
 00:04c3 .jump_kit2_sample_update
 00:0513 .jump_WAV_kit_write_to_registers
-
+;; 00:0532:op rNR51
+;; 00:0538:op rNR51
+;; 00:053b:op rNR30
+;; 00:0565:op rNR30
+;; 00:0569:op rNR33
+;; 00:056d:op rNR34
+;; 00:0571:op rNR51
+;; 00:0575:op rNR33
+;; 00:0578:op rNR34
 00:0581 jump_PU1_update_pitch_HF
 00:058d .jump_PU2_update_pitch_HF
 00:0599 .jump_WAV_update_pitch_HF
 00:05aa .jump_WAV_update_pitch_is_not_kit
 00:05b0 .jump_PU1_update_resync
+;; 00:05c5:op rNR12
+;; 00:05cc:op rNR14
 00:05ce .jump_PU2_update_resync
+;; 00:05e1:op rNR22
+;; 00:05e8:op rNR24
+
 00:05ea .jump_WAV_update_resync
+;; 00:05fb:op rNR34
 00:05fd .jump_NOI_update_resync
+;; 00:0610:op rNR42
+;; 00:0614:op rNR44
 00:0616 .jump_PU1_update_envelope
 00:0623 .jump_PU2_update_envelope
 00:0630 .jump_NOI_update_envelope
@@ -256,7 +273,15 @@
 00:0749 .jump_wait_for_div_sync_frame
 
 00:075a call_update_synth_frame
-
+;; 00:077f:op rNR51
+;; 00:0785:op rNR51
+;; 00:0788:op rNR30
+;; 00:07b2:op rNR30
+;; 00:07b6:op rNR33
+;; 00:07ba:op rNR34
+;; 00:07be:op rNR51
+;; 00:07c2:op rNR33
+;; 00:07c5:op rNR34
 00:07d2 call_00_07d2
 00:07d2 .code:004a
 
@@ -577,7 +602,8 @@
 00:12cd .jump_return
 
 00:12cf _main
-
+;; 00:12e1:op rNR52
+;; 00:12fa:op rNR52
 ;; 00:12f4:op _GAMEBOY_COLOR
 
 ;; 00:131f:op BANK(call_1c_40f2)
@@ -812,13 +838,24 @@
 00:1b5e call_PU1_update_pitch_registers
 00:1b74 .jump_PU1_add_vibrato_finetune
 00:1b83 .jump_PU1_add_slide_finetune
+;; 00:1b98:op rNR13
+;; 00:1b9a:op rNR14
+;; 00:1ba1:op rNR14
+;; 00:1ba6:op rNR11
+;; 00:1baa:op rNR14
 
 00:1bad call_PU2_update_pitch_registers
 00:1bca .jump_PU2_add_slide_finetune
-
+;; 00:1bdf:op rNR23
+;; 00:1be1:op rNR24
+;; 00:1be8:op rNR24
+;; 00:1bed:op rNR21
+;; 00:1bf1:op rNR24
 00:1bf4 call_WAV_update_pitch_registers
 00:1c15 .jump_WAV_add_slide_finetune
-
+;; 00:1c29:op rNR33
+;; 00:1c2c:op rNR34
+;; 00:1c2f:op rNR31
 00:1c33 call_00_1c33
 
 00:1c3b call_check_WAV_HF_event
@@ -980,7 +1017,8 @@
 
 00:2233 call_on_tick
 ;; 00:2233 routine that is called every tick
-
+;; 00:2265:op rNR52
+;; 00:2269:op rNR50
 ;; 00:2273:op BANK(call_02_701d)
 ;; 00:227a:op BANK(call_02_701d)
 ;; 00:227f:op call_02_701d
@@ -3277,6 +3315,9 @@
 
 01:7c94 call_01_7c94
 01:7c94 .code:0163
+;; 01:7ca3:op rNR52
+;; 01:7ca5:op rNR51
+;; 01:7ca7:op rNR50
 ;; 01:7caa:op rRAMG
 ;; 01:7cad:op CART_SRAM_ENABLE
 ;; 01:7caf:op rRAMB
@@ -3462,6 +3503,10 @@
 
 02:4637 call_02_4637
 
+;; 02:4670:op rNR42
+;; 02:4672:op rNR44
+;; 02:4676:op rNR44
+
 02:4679 call_02_4679
 02:4679 .code:004e
 
@@ -3471,6 +3516,8 @@
 02:46d8 call_update_volume_current_channel_tick
 02:46d8 .code:001f
 
+;; 02:46f4:op rNR32
+
 02:46f7 call_02_46f7
 02:46f7 .code:0038
 
@@ -3478,7 +3525,7 @@
 02:472f .code:0024
 
 ;; 02:4733:op HIGH(KILL_COUNTDOWN_TIMERS)
-;;02:4738:op LOW(KILL_COUNTDOWN_TIMERS)
+;; 02:4738:op LOW(KILL_COUNTDOWN_TIMERS)
 02:4744 .jump_is_retrig
 ;; 02:4744:op HIGH(RETRIG_COUNTDOWN_TIMERS)
 ;; 02:4749:op LOW(RETRIG_COUNTDOWN_TIMERS)
@@ -3510,6 +3557,7 @@
 
 02:487e call_02_487e
 02:487e .code:002d
+;; 02:4885:op HIGH(HAS_PLAYED_CHANNEL_TABLES)
 ;; 02:4897:op _SRAM_GROOVES
 ;; 02:489b Assume bank for _SRAM_GROOVES is 0
 ;; 02:489c:op rRAMB
@@ -3541,6 +3589,12 @@
 
 ;; 02:49d6:op LOW(PITCH_PERIOD_LUT_WRAM)
 ;; 02:49da:op HIGH(PITCH_PERIOD_LUT_WRAM)
+;; 02:4ab1:op rNR23
+;; 02:4abd:op rNR24
+;; 02:4acb:op rNR33
+;; 02:4ad0:op rNR34
+;; 02:4ae9:op rNR13
+;; 02:4af5:op rNR14
 
 02:4b8a call_write_current_channel_chain_transpose
 ;; 02:4b8a Write the current transpose for the playing channel chain row.
@@ -3618,6 +3672,8 @@
 02:4da9 call_02_4da9
 
 02:4e17 call_02_4e17
+
+;; 02:4e1a:op HIGH(HAS_PLAYED_CHANNEL_TABLES)
 
 02:4e2a call_02_4e2a
 02:4e2a .code:003f
@@ -3757,10 +3813,18 @@
 ;; 02:5185:op rRAMG
 ;; 02:518a:op rRAMG
 ;; 02:519c:op HIGH(TABLE_VOLUME_COUNTDOWNS)
+02:51b9 .jump_advance_volume_column
 ;; 02:51b9:op HIGH(TABLE_VOLUME_COUNTDOWNS)
 02:51da .jump_row_loop_back_after_row_0f
+02:51de .jump_update_volume_vol_column
+02:51ee .jump_update_volume_pu_noi
+02:51f3 .jump_update_command_rows
+;; 02:51f3:op HIGH(PU1_TABLE_STEP_MODE)
 ;; 02:51ff:op HIGH(NOTE_COUNTDOWNS)
+;; 02:5209:op HIGH(HAS_PLAYED_CHANNEL_TABLES)
+02:5215 .jump_note_countdown_is_0
 ;; 02:521d:op rRAMB
+02:5307 jump_decrease_note_countdown_and_return
 ;; 02:5307:op HIGH(NOTE_COUNTDOWNS)
 
 02:530f call_update_pitch_tick
@@ -3842,14 +3906,16 @@
 02:55ce call_02_55ce
 
 02:55e5 call_02_55e5
+;; 02:55e5:op HIGH(PU1_TABLE_STEP_MODE)
 
 02:5621 call_02_5621
+;; 02:5621:op HIGH(PU1_TABLE_STEP_MODE)
 
 ;; 02:564c Assume bank is set to bank for _SRAM_TABLE_TRANSPOSE
 ;; 02:564c:op _SRAM_TABLE_TRANSPOSE
 
-;; 02:5656:op LOW(ram_00_c108)
-;; 02:5659:op HIGH(ram_00_c108)
+;; 02:5656:op LOW(PLAYING_TABLE_TRANSPOSE_ADDRESSES)
+;; 02:5659:op HIGH(PLAYING_TABLE_TRANSPOSE_ADDRESSES)
 
 ;; 02:568e Assume bank is set to bank for _SRAM_TABLE_CMDS_2
 ;; 02:568e:op _SRAM_TABLE_CMDS_2
@@ -3858,6 +3924,7 @@
 ;; 02:569b:op HIGH(ram_00_c120)
 
 02:56ab call_02_56ab
+;; 02:56ab:op HIGH(PU1_TABLE_STEP_MODE)
 
 02:56f5 call_02_56f5
 
@@ -3910,8 +3977,8 @@
 ;; 02:5859 Assume bank is set to bank for _SRAM_TABLE_TRANSPOSE
 ;; 02:5859:op _SRAM_TABLE_TRANSPOSE
 
-;; 02:5863:op LOW(ram_00_c108)
-;; 02:5866:op HIGH(ram_00_c108)
+;; 02:5863:op LOW(PLAYING_TABLE_TRANSPOSE_ADDRESSES)
+;; 02:5866:op HIGH(PLAYING_TABLE_TRANSPOSE_ADDRESSES)
 
 02:5891 call_write_ff_x32
 ;; 02:5891 Write 0xff to 32 addresses.
@@ -4002,27 +4069,47 @@
 
 02:5f28 call_02_5f28
 
+;; 02:5f57:op rNR30
+
 02:5f71 call_02_5f71
 
 02:5f88 call_02_5f88
 02:5f88 .code:001c
 
 02:5fa4 call_02_5fa4
+;; 02:5fa7:op rNR52
 
-02:5fcf call_02_5fcf
-
-02:5fdc call_02_5fdc
-
-02:6013 call_02_6013
-
-02:6059 call_02_6059
-
-02:6099 call_02_6099
+;; 02:5fcb:op rNR50
+02:5fcf call_set_channel_registers
+02:5fdc call_set_noi_registers
+;; 02:5fe1:op rNR41
+;; 02:5fea:op rNR42
+;; 02:5ff9:op rNR44
+02:6013 call_set_pu1_registers
+;; 02:6017:op rNR10
+;; 02:6023:op rNR11
+;; 02:602c:op rNR12
+;; 02:6031:op rNR13
+;; 02:603f:op rNR14
+02:6059 call_set_pu2_registers
+;; 02:6063:op rNR21
+;; 02:606c:op rNR22
+;; 02:6071:op rNR23
+;; 02:607f:op rNR24
+02:6099 call_set_wav_registers
+;; 02:60c3:op rNR32
+;; 02:60d3:op rNR30
+;; 02:60db:op rNR32
+;; 02:60e2:op rNR34
 ;; 02:60f8 Assume bank is set to bank for _SRAM_SPEECH_WORDS
 ;; 02:60f8:op _SRAM_SPEECH_WORDS
-
+;; 02:613d:op rNR32
+;; 02:6142:op rNR33
+;; 02:6165:op rNR32
+;; 02:616a:op rNR33
 02:6171 call_02_6171
-
+;; 02:61b8:op rNR51
+;; 02:61bc:op rNR51
 02:61bf call_02_61bf
 ;; 02:61d0:op rRAMB
 ;; 02:61d3:op CART_SRAM_ENABLE
@@ -4031,6 +4118,10 @@
 
 02:620e call_02_620e
 02:620e .code:0233
+;; 02:620e:op rNR50
+;; 02:6223:op rNR50
+;; 02:6232:op rNR50
+;; 02:6235:op rNR50
 
 ;; 02:625f:op LOW(PU1_PITCH_PERIOD_LOW)
 ;; 02:6263:op HIGH(PU1_PITCH_PERIOD_LOW)
@@ -4471,7 +4562,7 @@
 
 ;; 02:7798:op LOW(ram_00_c304)
 ;; 02:779c:op HIGH(ram_00_c304)
-
+;; 02:77b8:op rNR52
 ;; 02:77ca:op LOW(LIVE_NEXT_SONG_ROWS)
 ;; 02:77ce:op HIGH(LIVE_NEXT_SONG_ROWS)
 
@@ -4522,7 +4613,7 @@
 ;; 02:7b57:op HIGH(PLAYING_PHRASES)
 
 02:7b9b call_02_7b9b
-
+;; 02:7bb9:op rNR52
 ;; 02:7bca:op LOW(ARE_CHANNELS_PLAYING)
 ;; 02:7bce:op HIGH(ARE_CHANNELS_PLAYING)
 
@@ -4541,13 +4632,19 @@
 02:7dfb data_02_7dfb
 02:7dfb .data:0078
 
-02:7e73 call_02_7e73
+02:7e73 call_update_volume_current_channel_PU_NOI
 
-02:7e82 call_02_7e82
+02:7e82 call_update_volume_noi_tick
+;; 02:7e89:op LOW(rNR42)
+02:7e8d call_update_volume_pu2_tick
+;; 02:7e94:op LOW(rNR22)
+02:7e98 call_update_volume_pu1_tick
+;; 02:7e9e:op LOW(rNR12)
 
-02:7e8d call_02_7e8d
-
-02:7e98 call_02_7e98
+02:7ea0 jump_write_volume_to_register
+;; 02:7ea6 zombie mode to increase volume
+02:7eab .jump_decrease_channel_volume
+;; 02:7eae zombie mode to decrease volume
 
 02:7eb9 data_bank_02_padding
 ;; 02:7eb9:replace:0147 ds $8000 - @, $ff    ; 02:7eb9
@@ -9725,7 +9822,7 @@
 
 1c:5098 call_1c_5098
 1c:5098 .code:001b
-
+;; 1c:50ac:op rNR52
 ;; 1c:509b:op _INTERRUPT_ENABLE
 
 1c:50b3 call_1c_50b3
@@ -12393,14 +12490,15 @@
 00:c102 LIVE_NEXT_WAV_CHAIN_PHRASE
 00:c103 LIVE_NEXT_NOI_CHAIN_PHRASE
 
-00:c108 ram_00_c108
-
-00:c10a ram_00_c10a
-
-00:c10c ram_00_c10c
-
-00:c10e PLAYING_TABLE_TRANSPOSE_ADDRESS_LOW
-00:c10f PLAYING_TABLE_TRANSPOSE_ADDRESS_HIGH
+00:c108 PLAYING_TABLE_TRANSPOSE_ADDRESSES
+00:c108 PLAYING_PU1_TABLE_TRANSPOSE_ROW_ADDRESS_LOW
+00:c109 PLAYING_PU1_TABLE_TRANSPOSE_ROW_ADDRESS_HIGH
+00:c10a PLAYING_PU2_TABLE_TRANSPOSE_ROW_ADDRESS_LOW
+00:c10b PLAYING_PU2_TABLE_TRANSPOSE_ROW_ADDRESS_HIGH
+00:c10c PLAYING_WAV_TABLE_TRANSPOSE_ROW_ADDRESS_LOW
+00:c10d PLAYING_WAV_TABLE_TRANSPOSE_ROW_ADDRESS_HIGH
+00:c10e PLAYING_NOI_TABLE_TRANSPOSE_ROW_ADDRESS_LOW
+00:c10f PLAYING_NOI_TABLE_TRANSPOSE_ROW_ADDRESS_HIGH
 
 00:c110 PLAYING_PHRASE_NOTE_ADDRESSES
 00:c110 PLAYING_PU1_PHRASE_NOTE_ADDRESS_LOW
@@ -12412,14 +12510,15 @@
 00:c116 PLAYING_NOI_PHRASE_NOTE_ADDRESS_LOW
 00:c117 PLAYING_NOI_PHRASE_NOTE_ADDRESS_HIGH
 
-00:c118 ram_00_c118
-
-00:c11a ram_00_c11a
-
-00:c11c ram_00_c11c
-
-00:c11e PLAYING_TABLE_CMD_1_ADDRESS_LOW
-00:c11f PLAYING_TABLE_CMD_1_ADDRESS_HIGH
+00:c118 PLAYING_TABLE_CMD_1_ADDRESSES
+00:c118 PLAYING_PU1_TABLE_CMD_1_ADDRESS_LOW
+00:c119 PLAYING_PU1_TABLE_CMD_1_ADDRESS_HIGH
+00:c11a PLAYING_PU2_TABLE_CMD_1_ADDRESS_LOW
+00:c11b PLAYING_PU2_TABLE_CMD_1_ADDRESS_HIGH
+00:c11c PLAYING_WAV_TABLE_CMD_1_ADDRESS_LOW
+00:c11d PLAYING_WAV_TABLE_CMD_1_ADDRESS_HIGH
+00:c11e PLAYING_NOI_TABLE_CMD_1_ADDRESS_LOW
+00:c11f PLAYING_NOI_TABLE_CMD_1_ADDRESS_HIGH
 
 00:c120 ram_00_c120
 
@@ -12814,9 +12913,8 @@
 
 00:c365 ram_00_c365
 
-00:c369 ram_00_c369
-
-00:c36a ram_00_c36a
+00:c369 CURRENT_TABLE_COL_1_COMMAND
+00:c36a CURRENT_TABLE_COL_2_COMMAND
 
 00:c36b CHANNEL_GROOVES_2
 00:c36b PU1_GROOVE_2
