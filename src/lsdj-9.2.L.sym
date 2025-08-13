@@ -333,7 +333,7 @@
 
 ;; 00:09a4 Return
 
-00:09a8 multiples_of_19
+00:09a8 data_multiples_of_19
 ;; 00:09a8 used for drum pitch mode computations
 00:09a8 .data:d8
 
@@ -1168,58 +1168,58 @@
 ;; 00:26e3:op _FILE_SCREEN
 ;; 00:26e8:op _HELP_SCREEN
 
-;; 00:2709:op LOW(MOD_PU1_TYPE)
-;; 00:270d:op HIGH(MOD_PU1_TYPE)
+;; 00:2709:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:270d:op HIGH(PU1_SONG_SCREEN_PAN)
 
 ;; 00:271e:op _SONG_SCREEN
 
-;; 00:2735:op LOW(MOD_PU1_TYPE)
-;; 00:2739:op HIGH(MOD_PU1_TYPE)
+;; 00:2735:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:2739:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:274a:op LOW(MOD_PU1_TYPE)
-;; 00:274e:op HIGH(MOD_PU1_TYPE)
+;; 00:274a:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:274e:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:2788:op LOW(MOD_PU1_FLAG)
-;; 00:278c:op HIGH(MOD_PU1_FLAG)
+;; 00:2788:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:278c:op HIGH(PU1_OUTPUT_AND_FLAG)
 
-;; 00:279b:op LOW(MOD_PU1_FLAG)
-;; 00:279f:op HIGH(MOD_PU1_FLAG)
+;; 00:279b:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:279f:op HIGH(PU1_OUTPUT_AND_FLAG)
 
-;; 00:27a8:op BANK(call_02_6171)
-;; 00:27af:op BANK(call_02_6171)
+;; 00:27a8:op BANK(call_update_output_current_channel)
+;; 00:27af:op BANK(call_update_output_current_channel)
 
-;; 00:27b4:op LOW(MOD_PU1_TYPE)
-;; 00:27b8:op HIGH(MOD_PU1_TYPE)
+;; 00:27b4:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:27b8:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:27c1:op call_02_6171
+;; 00:27c1:op call_update_output_current_channel
 
-;; 00:27c9:op LOW(MOD_PU1_FLAG)
-;; 00:27cd:op HIGH(MOD_PU1_FLAG)
+;; 00:27c9:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:27cd:op HIGH(PU1_OUTPUT_AND_FLAG)
 
 ;; 00:27d9:op BANK(call_1f_6ff1)
 ;; 00:27e0:op BANK(call_1f_6ff1)
 ;; 00:27e2:op call_1f_6ff1
 
-;; 00:2820:op LOW(MOD_PU1_FLAG)
-;; 00:2824:op HIGH(MOD_PU1_FLAG)
+;; 00:2820:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:2824:op HIGH(PU1_OUTPUT_AND_FLAG)
 
-;; 00:282d:op LOW(MOD_PU1_TYPE)
-;; 00:2831:op HIGH(MOD_PU1_TYPE)
+;; 00:282d:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:2831:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:284f:op LOW(MOD_PU1_TYPE)
-;; 00:2853:op HIGH(MOD_PU1_TYPE)
+;; 00:284f:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:2853:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:2863:op LOW(MOD_PU1_TYPE)
-;; 00:2867:op HIGH(MOD_PU1_TYPE)
+;; 00:2863:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:2867:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:287b:op LOW(MOD_PU1_FLAG)
-;; 00:287f:op HIGH(MOD_PU1_FLAG)
+;; 00:287b:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:287f:op HIGH(PU1_OUTPUT_AND_FLAG)
 
-;; 00:28ac:op LOW(MOD_PU1_FLAG)
-;; 00:28b0:op HIGH(MOD_PU1_FLAG)
+;; 00:28ac:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:28b0:op HIGH(PU1_OUTPUT_AND_FLAG)
 
-;; 00:28c2:op LOW(MOD_PU1_FLAG)
-;; 00:28c6:op HIGH(MOD_PU1_FLAG)
+;; 00:28c2:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:28c6:op HIGH(PU1_OUTPUT_AND_FLAG)
 
 ;; 00:28d4:op BANK(call_1f_6ff1)
 ;; 00:28db:op BANK(call_1f_6ff1)
@@ -1227,26 +1227,26 @@
 
 ;; 00:28ee:op _SELECT_CURSOR_MODE
 
-;; 00:2956:op LOW(MOD_PU1_TYPE)
-;; 00:295a:op HIGH(MOD_PU1_TYPE)
+;; 00:2956:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:295a:op HIGH(PU1_SONG_SCREEN_PAN)
 
 ;; 00:2962:op LOW(ram_00_c0a8)
 ;; 00:2966:op HIGH(ram_00_c0a8)
 
-;; 00:297d:op LOW(MOD_PU1_FLAG)
-;; 00:2981:op HIGH(MOD_PU1_FLAG)
+;; 00:297d:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:2981:op HIGH(PU1_OUTPUT_AND_FLAG)
 
 ;; 00:29a9:op LOW(ram_00_c0a8)
 ;; 00:29ad:op HIGH(ram_00_c0a8)
 
-;; 00:29bb:op LOW(MOD_PU1_TYPE)
-;; 00:29bf:op HIGH(MOD_PU1_TYPE)
+;; 00:29bb:op LOW(PU1_SONG_SCREEN_PAN)
+;; 00:29bf:op HIGH(PU1_SONG_SCREEN_PAN)
 
-;; 00:29d9:op LOW(MOD_PU1_FLAG)
-;; 00:29dd:op HIGH(MOD_PU1_FLAG)
+;; 00:29d9:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:29dd:op HIGH(PU1_OUTPUT_AND_FLAG)
 
-;; 00:29f7:op LOW(MOD_PU1_FLAG)
-;; 00:29fb:op HIGH(MOD_PU1_FLAG)
+;; 00:29f7:op LOW(PU1_OUTPUT_AND_FLAG)
+;; 00:29fb:op HIGH(PU1_OUTPUT_AND_FLAG)
 
 ;; 00:2a12:op BANK(call_1f_6ff1)
 ;; 00:2a19:op BANK(call_1f_6ff1)
@@ -1570,9 +1570,11 @@
 00:2f63 call_update_envelope_volume_register_zombie_mode
 ;; 00:2f6a zombie mode behavior: writing $08 while bits 0-2 are set to 0 increases volume by 1
 00:2f6c call_PU1_update_envelope_volume
+;; 00:2f6f:op LOW(rNR12)
 00:2f82 call_PU2_update_envelope_volume
+;; 00:2f85:op LOW(rNR22)
 00:2f98 call_NOI_update_envelope_volume
-
+;; 00:2f9b:op LOW(rNR42)
 00:2faf ENVELOPE_TIMER_LENGTH_LUT
 00:2faf .data:0010
 
@@ -1582,7 +1584,9 @@
 00:2fe2 .jump_PU1_end_envelope_stage_2
 00:2fef .jump_PU1_next_envelope_stage
 
-00:2ff5 call_00_2ff5
+00:2ff5 call_PU1_convert_envelope_value_to_length
+00:2ff8 jump_convert_envelope_value_to_length
+00:3001 .jump_no_carry
 
 00:3006 jump_PU2_end_envelope_stage   
 00:3010 .jump_PU2_end_envelope
@@ -1590,7 +1594,7 @@
 00:3029 .jump_PU2_end_envelope_stage_2
 00:3036 .jump_PU2_next_envelope_stage
 
-00:303c call_00_303c
+00:303c call_PU2_convert_envelope_value_to_length
 
 00:3041 jump_NOI_end_envelope_stage   
 00:304b .jump_NOI_end_envelope
@@ -1598,7 +1602,7 @@
 00:3064 .jump_NOI_end_envelope_stage_2
 00:3071 .jump_NOI_next_envelope_stage
 
-00:3077 call_00_3077
+00:3077 call_NOI_convert_envelope_value_to_length
 
 00:307d call_00_307d
 
@@ -2293,9 +2297,9 @@
 01:40fa .data:00d8
 01:41d2 PITCH_PERIOD_SGB_LUT_ROM
 01:41d2 .data:00d8
-01:42aa data_01_42aa
+01:42aa DRUM_PITCH_MODE_NOTE_VALUES_AND_FINETUNE_LUT_ROM
 01:42aa .data:00d8
-01:4382 data_01_4382
+01:4382 DRUM_PITCH_MODE_NOTE_VALUES_AND_FINETUNE_SGB_LUT_ROM
 01:4382 .data:00d8
 
 01:445a call_sram_test
@@ -3476,7 +3480,7 @@
 02:4276 call_02_4276
 02:4276 .code:0010
 
-02:4286 call_02_4286
+02:4286 call_apply_L_command
 02:4286 .code:0148
 ;; 02:42da:op rRAMB
 ;; 02:42dd:op CART_SRAM_ENABLE
@@ -3507,19 +3511,24 @@
 ;; 02:4672:op rNR44
 ;; 02:4676:op rNR44
 
-02:4679 call_02_4679
+02:4679 call_apply_A_command
 02:4679 .code:004e
 
-02:46c7 call_02_46c7
+02:46c7 call_reset_retrig_and_kill_flags_current_channel
 02:46c7 .code:0011
 
 02:46d8 call_update_volume_current_channel_tick
+02:46d8 jump_apply_E_command
 02:46d8 .code:001f
+
+02:46e8 jump_update_WAV_output_level
 
 ;; 02:46f4:op rNR32
 
-02:46f7 call_02_46f7
+02:46f7 call_apply_F_command
 02:46f7 .code:0038
+02:4704 .jump_apply_F_command_PU1
+02:4715 .jump_apply_F_command_PU2
 
 02:472f call_retrig_and_kill_current_flag
 02:472f .code:0024
@@ -3533,11 +3542,15 @@
 02:4753 call_retrig_and_kill
 02:4753 .code:003a
 02:4758 .jump_for_loop_flags
+02:476c jump_apply_C_command
 02:4787 .jump_retrig_noise_shape
-02:478d call_02_478d
-
-02:47a2 data_02_47a2
-02:47a2 .data:009d
+02:478d call_handle_current_playing_command
+;; 02:4790:op _Z_COMMAND
+02:479c .jump_no_carry
+02:47a2 data_command_handling_jump_addresses_table
+02:47a2 .data:0026
+02:47c8 jump_apply_Z_command
+02:47c8 .code:0077
 
 02:483f call_increment_current_channel_phrase_addresses
 ;; 02:483f Increment addresses for the current channel relating to phrases.
@@ -3584,17 +3597,53 @@
 ;; 02:4943:op rRAMG
 ;; 02:4949:op rRAMG
 
-02:494d call_02_494d
+02:494d call_start_instrument_current_channel
 02:494d .code:023d
-
+02:4981 .jump_noise_note_defined
+02:49a1 .jump_channel_not_noise 
+02:49b7 .jump_no_instrument update
+02:49c3 .jump_is_not_kit
 ;; 02:49d6:op LOW(PITCH_PERIOD_LUT_WRAM)
 ;; 02:49da:op HIGH(PITCH_PERIOD_LUT_WRAM)
+02:49e0 .jump_drum_pitch_mode
+;; 02:49e0:op LOW(data_multiples_of_19)
+;; 02:49e4:op HIGH(data_multiples_of_19)
+02:4a01 .jump_skip_drum_pitch
+;; 02:4a04:op _L_COMMAND
+02:4a1a .jump_is_pu1_no_transpose
+02:4a1b .jump_keep_pu2_transpose
+02:4a22 .jump_no_carry_pitch_LUT
+02:4a30 jump_skip_reset_current_note
+;; 02:4a33:op _SYNC_KEYBOARD
+02:4a43 .jump_keyboard_always_reset
+;; 02:4a46:op LOW(PU1_VIBRATO_SPEED_HIGH)
+;; 02:4a49:op HIGH(PU1_VIBRATO_SPEED_HIGH)
+;; 02:4a51:op _F_COMMAND
+02:4a6c .jump_skip_wav_F_command
+;; 02:4a6c:op _E_COMMAND
+02:4a70 .jump_initialize_envelope
+02:4a75 .jump_E_command
+02:4a7b .jump_initialize_output
+;; 02:4a81:op _O_COMMAND
+02:4a93 .jump_output_from_instrument
+02:4a9b .jump_apply_output
+02:4aa3 .jump_initalize_pitch
 ;; 02:4ab1:op rNR23
 ;; 02:4abd:op rNR24
+02:4ac1 .jump_initialize_pitch_wav
 ;; 02:4acb:op rNR33
 ;; 02:4ad0:op rNR34
+02:4ad4 .jump_initialize_shape_noi
+02:4ae6 .jump_initialize_pitch_pu1
 ;; 02:4ae9:op rNR13
 ;; 02:4af5:op rNR14
+02:4af7 .jump_init_finetune
+;; 02:4aff:op _L_COMMAND
+02:4b20 .jump_no_carry_drum_pitch_lut
+02:4b2e .jump_skip_drum_pitch_2
+02:4b40 .jump_skip_reset_finetune
+02:4b5b jump_decrease_countdown_and_return
+02:4b64 jump_is_kit
 
 02:4b8a call_write_current_channel_chain_transpose
 ;; 02:4b8a Write the current transpose for the playing channel chain row.
@@ -3920,13 +3969,13 @@
 ;; 02:568e Assume bank is set to bank for _SRAM_TABLE_CMDS_2
 ;; 02:568e:op _SRAM_TABLE_CMDS_2
 
-;; 02:5698:op LOW(ram_00_c120)
-;; 02:569b:op HIGH(ram_00_c120)
+;; 02:5698:op LOW(PLAYING_TABLE_CMD_2_ADDRESSES)
+;; 02:569b:op HIGH(PLAYING_TABLE_CMD_2_ADDRESSES)
 
 02:56ab call_02_56ab
 ;; 02:56ab:op HIGH(PU1_TABLE_STEP_MODE)
 
-02:56f5 call_02_56f5
+02:56f5 call_set_initial_envelope_instrument
 
 02:5715 call_02_5715
 ;; 02:5727 Assume bank is set to bank for _SRAM_TABLE_VOLS
@@ -4107,7 +4156,14 @@
 ;; 02:6142:op rNR33
 ;; 02:6165:op rNR32
 ;; 02:616a:op rNR33
-02:6171 call_02_6171
+02:6171 call_update_output_current_channel
+02:6191 .jump_no_channel_mute_pan
+02:619f .jump_output_mute
+02:61a2 .jump_output_left
+02:61a6 .jump_output_right
+02:61a8 .jump_prepare_bit_mask
+02:61ae .jump_loop_line_bits_with_current_channel
+02:61b8 .jump_write_bits_to_register
 ;; 02:61b8:op rNR51
 ;; 02:61bc:op rNR51
 02:61bf call_02_61bf
@@ -4116,7 +4172,7 @@
 ;; 02:61d6:op rRAMG
 ;; 02:620a:op rRAMG
 
-02:620e call_02_620e
+02:620e call_apply_M_command
 02:620e .code:0233
 ;; 02:620e:op rNR50
 ;; 02:6223:op rNR50
@@ -4132,6 +4188,8 @@
 ;; 02:62e3:op LOW(PU1_TICK_PITCH_UPDATE_FLAG)
 ;; 02:62e7:op HIGH(PU1_TICK_PITCH_UPDATE_FLAG)
 
+02:62f3 jump_apply_F_command_WAV
+
 02:6441 call_rand_char_range
 ;; 02:6441 Get a random char between 0 and a value.
 ;; 02:6441 Args: value
@@ -4143,7 +4201,7 @@
 
 02:6463 .jump_return
 
-02:6465 call_02_6465
+02:6465 call_apply_R_command
 02:6465 .code:00da
 
 ;; 02:647c:op LOW(PU1_CMD_RATE)
@@ -4187,8 +4245,8 @@
 ;; 02:6589:op LOW(PLAYING_TABLES)
 ;; 02:658d:op HIGH(PLAYING_TABLES)
 
-;; 02:6595:op LOW(ram_00_c420)
-;; 02:6599:op HIGH(ram_00_c420)
+;; 02:6595:op LOW(PU1_PHRASE_NOTE_VALUE_UPDATE_FLAG)
+;; 02:6599:op HIGH(PU1_PHRASE_NOTE_VALUE_UPDATE_FLAG)
 
 ;; 02:65a1:op LOW(PU1_CURRENT_CHORD)
 ;; 02:65a5:op HIGH(PU1_CURRENT_CHORD)
@@ -4196,7 +4254,7 @@
 ;; 02:65ad:op LOW(PU1_PITCH_TICK_MODE)
 ;; 02:65b1:op HIGH(PU1_PITCH_TICK_MODE)
 
-02:65bb call_02_65bb
+02:65bb call_apply_K_command
 02:65bb .code:0053
 
 ;; 02:65ca:op LOW(KILL_COUNTDOWN_TIMERS)
@@ -4205,10 +4263,10 @@
 ;; 02:65f1:op LOW(RETRIG_AND_KILL_FLAGS)
 ;; 02:65f5:op HIGH(RETRIG_AND_KILL_FLAGS)
 
-02:660e call_02_660e
+02:660e call_apply_P_command
 02:660e .code:0019
 
-02:6627 call_02_6627
+02:6627 call_apply_O_command
 02:6627 .code:000a
 
 02:6631 call_02_6631
@@ -4265,7 +4323,9 @@
 02:68dc .data:0008
 
 02:68e4 call_02_68e4
-
+02:692d jump_update_NOI_envelope
+02:68f7 jump_update_PU1_envelope
+02:6963 jump_update_PU2_envelope
 02:6999 call_02_6999
 
 ;; 02:69bc:op _CHAIN_SCREEN
@@ -4477,8 +4537,8 @@
 
 02:7041 call_02_7041
 
-;; 02:704e:op LOW(CHANNEL_GROOVES_2)
-;; 02:7052:op HIGH(CHANNEL_GROOVES_2)
+;; 02:704e:op LOW(PHRASE_COMMAND_VALUES)
+;; 02:7052:op HIGH(PHRASE_COMMAND_VALUES)
 
 ;; 02:7136:op LOW(ram_00_c300)
 ;; 02:713a:op HIGH(ram_00_c300)
@@ -4534,14 +4594,14 @@
 ;; 02:75ef:op LOW(PLAYING_PHRASE_CMD_VALUE_ADDRESSES)
 ;; 02:75f3:op HIGH(PLAYING_PHRASE_CMD_VALUE_ADDRESSES)
 
-;; 02:7646:op LOW(CHANNEL_GROOVES_2)
-;; 02:764a:op HIGH(CHANNEL_GROOVES_2)
+;; 02:7646:op LOW(PHRASE_COMMAND_VALUES)
+;; 02:764a:op HIGH(PHRASE_COMMAND_VALUES)
 
-;; 02:7690:op LOW(ram_00_c0f0)
-;; 02:7694:op HIGH(ram_00_c0f0)
+;; 02:7690:op LOW(CHANNEL_UPDATED_PHRASE_ROW_FLAGS)
+;; 02:7694:op HIGH(CHANNEL_UPDATED_PHRASE_ROW_FLAGS)
 
-;; 02:76a2:op LOW(CHANNEL_GROOVES_2)
-;; 02:76a6:op HIGH(CHANNEL_GROOVES_2)
+;; 02:76a2:op LOW(PHRASE_COMMAND_VALUES)
+;; 02:76a6:op HIGH(PHRASE_COMMAND_VALUES)
 
 ;; 02:76c4:op LOW(ram_00_c178)
 ;; 02:76c8:op HIGH(ram_00_c178)
@@ -4549,11 +4609,11 @@
 ;; 02:76da:op LOW(ram_00_c0fc)
 ;; 02:76de:op HIGH(ram_00_c0fc)
 
-;; 02:76e7:op LOW(ram_00_c0f0)
-;; 02:76eb:op HIGH(ram_00_c0f0)
+;; 02:76e7:op LOW(CHANNEL_UPDATED_PHRASE_ROW_FLAGS)
+;; 02:76eb:op HIGH(CHANNEL_UPDATED_PHRASE_ROW_FLAGS)
 
-;; 02:76f9:op LOW(CHANNEL_GROOVES_2)
-;; 02:76fd:op HIGH(CHANNEL_GROOVES_2)
+;; 02:76f9:op LOW(PHRASE_COMMAND_VALUES)
+;; 02:76fd:op HIGH(PHRASE_COMMAND_VALUES)
 
 02:7712 call_02_7712
 02:7712 .code:007f
@@ -4617,15 +4677,22 @@
 ;; 02:7bca:op LOW(ARE_CHANNELS_PLAYING)
 ;; 02:7bce:op HIGH(ARE_CHANNELS_PLAYING)
 
-02:7c4a call_02_7c4a
+02:7c4a call_apply_E_command
 
-;; 02:7c4e:op LOW(CHANNEL_GROOVES_2)
-;; 02:7c52:op HIGH(CHANNEL_GROOVES_2)
+;; 02:7c4e:op LOW(PHRASE_COMMAND_VALUES)
+;; 02:7c52:op HIGH(PHRASE_COMMAND_VALUES)
 
-02:7c6c jump_table_02_7c6c
-
+02:7c6c .jump_table_channel
+02:7c78 .jump_pu1
+02:7c85 .jump_pu2
+02:7c92 .jump_wav
+02:7cac .jump_noi
+02:7cb6 .jump_update_envelope_pu_noi
 ;; 02:7cb9:op LOW(PU1_VOLUME_ENVELOPE)
 ;; 02:7cbd:op HIGH(PU1_VOLUME_ENVELOPE)
+02:7cce .jump_return
+
+;; 02:7ccc:op _E_COMMAND
 
 02:7cd0 data_02_7cd0
 02:7cd0 .data:012b
@@ -8668,9 +8735,9 @@
 ;; 07:6c24:op LOW(ram_00_cb9a)
 ;; 07:6c28:op HIGH(ram_00_cb9a)
 
-;; 07:6c37:op LOW(call_02_4679)
-;; 07:6c39:op HIGH(call_02_4679)
-;; 07:6c3c:op BANK(call_02_4679)
+;; 07:6c37:op LOW(call_apply_A_command)
+;; 07:6c39:op HIGH(call_apply_A_command)
+;; 07:6c3c:op BANK(call_apply_A_command)
 
 ;; 07:6cb4:op LOW(ram_00_cb96 - 1)
 ;; 07:6cb9:op HIGH(ram_00_cb96 - 1)
@@ -12393,21 +12460,21 @@
 
 00:c000 ram_00_0000
 
-00:c0a0 MOD_PU1_FLAG
+00:c0a0 PU1_OUTPUT_AND_FLAG
 ;; 00:c0a0 The high byte enables mute/pan on the pulse 1 channel
-00:c0a1 MOD_PU2_FLAG
+00:c0a1 PU2_OUTPUT_AND_FLAG
 ;; 00:c0a1 The high byte enables mute/pan on the pulse 2 channel
-00:c0a2 MOD_WAV_FLAG
+00:c0a2 WAV_OUTPUT_AND_FLAG
 ;; 00:c0a2 The high byte enables mute/pan on the wave channel
-00:c0a3 MOD_NOI_FLAG
+00:c0a3 NOI_OUTPUT_AND_FLAG
 ;; 00:c0a3 The high byte enables mute/pan on the noise channel
-00:c0a4 MOD_PU1_TYPE
+00:c0a4 PU1_SONG_SCREEN_PAN
 ;; 00:c0a4 Sets mute (0), left pan (1), or right pan (2) for the pulse 1 channel
-00:c0a5 MOD_PU2_TYPE
+00:c0a5 PU2_SONG_SCREEN_PAN
 ;; 00:c0a5 Sets mute (0), left pan (1), or right pan (2) for the pulse 2 channel
-00:c0a6 MOD_WAV_TYPE
+00:c0a6 WAV_SONG_SCREEN_PAN
 ;; 00:c0a6 Sets mute (0), left pan (1), or right pan (2) for the wave channel
-00:c0a7 MOD_NOI_TYPE
+00:c0a7 NOI_SONG_SCREEN_PAN
 ;; 00:c0a7 Sets mute (0), left pan (1), or right pan (2) for the noise channel
 
 00:c0a8 ram_00_c0a8
@@ -12428,7 +12495,11 @@
 00:c0c6 WAV_TABLE_VOL_COUNTDOWN
 00:c0c7 NOI_TABLE_VOL_COUNTDOWN
 
-00:c0c8 ram_00_c0c8
+00:c0c8 PHRASE_CURRENT_ROW_INSTRUMENTS
+00:c0c8 PU1_PHRASE_CURRENT_ROW_INSTRUMENT
+00:c0c9 PU2_PHRASE_CURRENT_ROW_INSTRUMENT
+00:c0ca WAV_PHRASE_CURRENT_ROW_INSTRUMENT
+00:c0cb NOI_PHRASE_CURRENT_ROW_INSTRUMENT
 
 00:c0cc CURRENT_NOTES
 00:c0cc CURRENT_PU1_NOTE
@@ -12464,14 +12535,15 @@
 00:c0e8 PU1_NOTE_VALUE_PLAYING
 00:c0e9 PU2_NOTE_VALUE_PLAYING
 00:c0ea WAV_NOTE_VALUE_PLAYING
-00:c0eb ram_00_c0eb
+00:c0eb NOI_NOTE_VALUE_PLAYING
 
 00:c0ec ram_00_c0ec
 
-00:c0f0 ram_00_c0f0
-00:c0f1 ram_00_c0f1
-00:c0f2 ram_00_c0f2
-00:c0f3 ram_00_c0f3
+00:c0f0 CHANNEL_UPDATED_PHRASE_ROW_FLAGS
+00:c0f0 PU1_UPDATED_PHRASE_ROW_FLAG
+00:c0f1 PU2_UPDATED_PHRASE_ROW_FLAG
+00:c0f2 WAV_UPDATED_PHRASE_ROW_FLAG
+00:c0f3 NOI_UPDATED_PHRASE_ROW_FLAG
 
 00:c0f4 PU1_PITCH_PERIOD_LOW
 00:c0f5 PU1_PITCH_PERIOD_HIGH
@@ -12520,14 +12592,15 @@
 00:c11e PLAYING_NOI_TABLE_CMD_1_ADDRESS_LOW
 00:c11f PLAYING_NOI_TABLE_CMD_1_ADDRESS_HIGH
 
-00:c120 ram_00_c120
-
-00:c122 ram_00_c122
-
-00:c124 ram_00_c124
-
-00:c126 PLAYING_TABLE_CMD_2_ADDRESS_LOW
-00:c127 PLAYING_TABLE_CMD_2_ADDRESS_HIGH
+00:c120 PLAYING_TABLE_CMD_2_ADDRESSES
+00:c120 PLAYING_PU1_TABLE_CMD_2_ADDRESS_LOW
+00:c121 PLAYING_PU1_TABLE_CMD_2_ADDRESS_HIGH
+00:c122 PLAYING_PU2_TABLE_CMD_2_ADDRESS_LOW
+00:c123 PLAYING_PU2_TABLE_CMD_2_ADDRESS_HIGH
+00:c124 PLAYING_WAV_TABLE_CMD_2_ADDRESS_LOW
+00:c125 PLAYING_WAV_TABLE_CMD_2_ADDRESS_HIGH
+00:c126 PLAYING_NOI_TABLE_CMD_2_ADDRESS_LOW
+00:c127 PLAYING_NOI_TABLE_CMD_2_ADDRESS_HIGH
 
 00:c128 PLAYING_PHRASE_CMD_VALUE_ADDRESSES
 00:c128 PLAYING_PU1_PHRASE_CMD_VALUE_ADDRESS_LOW
@@ -12694,8 +12767,8 @@
 
 00:c21c PU1_CHORD_STAGE
 00:c21d PU2_CHORD_STAGE
-00:c21e NOI_CHORD_STAGE
-00:c21f WAV_CHORD_STAGE
+00:c21e WAV_CHORD_STAGE
+00:c21f NOI_CHORD_STAGE
 
 00:c220 ram_00_c220
 00:c221 ram_00_c221
@@ -12750,7 +12823,7 @@
 
 00:c2d8 PU1_VOLUME_ENVELOPE
 00:c2d9 PU2_VOLUME_ENVELOPE
-00:c2da WAV_OUTPUT_LEVEL
+00:c2da WAV_OUTPUT_LEVEL_WRITTEN
 00:c2db NOI_VOLUME_ENVELOPE
 
 00:c2dc PU1_DUTY_AND_TIMER
@@ -12762,8 +12835,7 @@
 
 00:c2e4 PU1_SWEEP
 
-00:c2e7 ram_00_c2e7
-
+00:c2e7 NOI_PLAYING_NOTE
 00:c2e8 ram_00_c2e8
 
 00:c2e9 ram_00_c2e9
@@ -12848,11 +12920,11 @@
 00:c32e ram_00_c32e
 00:c32f ram_00_c32f
 
-00:c330 ram_00_c330
-00:c331 ram_00_c331
-00:c332 ram_00_c332
-00:c333 ram_00_c333
+00:c330 PU1_IS_DRUM_PITCH
+00:c331 PU2_IS_DRUM_PITCH
+00:c332 WAV_IS_DRUM_PITCH
 
+00:c333 ram_00_c333
 00:c334 ram_00_c334
 00:c335 ram_00_c335
 00:c336 ram_00_c336
@@ -12886,13 +12958,10 @@
 00:c34f PU2_TICK_PITCH_UPDATE_FLAG
 00:c350 WAV_TICK_PITCH_UPDATE_FLAG
 
-00:c352 ram_00_c352
-
-00:c353 ram_00_c353
-
-00:c354 ram_00_c354
-
-00:c355 ram_00_c355
+00:c352 PU1_INSTRUMENT_DUTY_AND_OUTPUT
+00:c353 PU2_INSTRUMENT_DUTY_AND_OUTPUT
+00:c354 WAV_INSTRUMENT_OUTPUT
+00:c355 NOI_INSTRUMENT_OUTPUT
 
 00:c356 PU1_PITCH_LUT_ADDRESS
 00:c358 PU2_PITCH_LUT_ADDRESS
@@ -12911,16 +12980,20 @@
 00:c363 WAV_FRAME_CURRENT_PHASE_LOW
 00:c364 WAV_FRAME_CURRENT_PHASE_HIGH
 
-00:c365 ram_00_c365
+00:c365 CURRENT_PHRASES_COMMANDS
+00:c365 PU1_CURRENT_PHRASE_COMMAND
+00:c366 PU2_CURRENT_PHRASE_COMMAND
+00:c367 WAV_CURRENT_PHRASE_COMMAND
+00:c368 NOI_CURRENT_PHRASE_COMMAND
 
 00:c369 CURRENT_TABLE_COL_1_COMMAND
 00:c36a CURRENT_TABLE_COL_2_COMMAND
 
-00:c36b CHANNEL_GROOVES_2
-00:c36b PU1_GROOVE_2
-00:c36c PU2_GROOVE_2
-00:c36d WAV_GROOVE_2
-00:c36e NOI_GROOVE_2
+00:c36b PHRASE_COMMAND_VALUES
+00:c36b PU1_PHRASE_COMMAND_VALUE
+00:c36c PU2_PHRASE_COMMAND_VALUE
+00:c36d WAV_PHRASE_COMMAND_VALUE
+00:c36e NOI_PHRASE_COMMAND_VALUE
 
 00:c36f ram_00_c36f
 
@@ -13011,10 +13084,10 @@
 00:c41e SONG_CURSOR_COL
 00:c41f SONG_CURSOR_ROW
 
-00:c420 ram_00_c420
-00:c421 ram_00_c421
-00:c422 ram_00_c422
-00:c423 ram_00_c423
+00:c420 PU1_PHRASE_NOTE_VALUE_UPDATE_FLAG
+00:c421 PU2_PHRASE_NOTE_VALUE_UPDATE_FLAG
+00:c422 WAV_PHRASE_NOTE_VALUE_UPDATE_FLAG
+00:c423 NOI_PHRASE_NOTE_VALUE_UPDATE_FLAG
 
 00:c424 ram_00_c424
 
@@ -13133,7 +13206,7 @@
 00:c4d2 ram_00_c4d2
 00:c4d3 ram_00_c4d3
 
-00:c4d4 ram_00_c4d4
+00:c4d4 PU2_INSTRUMENT_TRANSPOSE
 00:c4d5 KIT_1_SAMPLE_ADDRESS_START_LOW
 00:c4d6 KIT_1_SAMPLE_ADDRESS_START_HIGH
 00:c4d7 KIT_1_SAMPLE_ADDRESS_END_LOW
@@ -13293,7 +13366,7 @@
 
 00:c691 ram_00_c691
 
-00:c692 ram_00_c692
+00:c692 CURRENT_DRUM_PITCH_MODE_BASE_NOTE
 
 00:c693 PLAYING_SYNTH_FRAME
 
@@ -13366,7 +13439,7 @@
 
 00:c8c2 ram_00_c8c2
 
-00:c8c3 ram_00_c8c3
+00:c8c3 CURRENT_PHRASE_COMMAND_CURRENT_CHANNEL
 
 00:c8c4 ram_00_c8c4
 
@@ -13417,7 +13490,7 @@
 
 00:c8f0 ram_00_c8f0
 00:c8f1 ram_00_c8f1
-00:c8f2 ram_00_c8f2
+00:c8f2 WAV_OUTPUT_LEVEL
 00:c8f3 KIT_IS_PLAYING_TICK
 00:c8f4 KIT_IS_PLAYING
 00:c8f5 ram_00_c8f5
@@ -13701,8 +13774,8 @@
 00:cb63 ram_00_cb63
 
 00:cb64 ram_00_cb64
-00:cb65 SYNC
-00:cb66 ram_00_cb66
+00:cb65 SYNC_MODE
+00:cb66 SYNC_MODE_PARAM_VALUE
 00:cb67 ram_00_cb67
 
 00:cb68 ram_00_cb68
@@ -13863,9 +13936,8 @@
 00:cbfb BG_COLOUR
 ;; 00:cbfb gbdk 2.95 libc/gb/font.ms:.bg_colour
 
-00:cd28 ram_00_cd28
-
-00:cd94 ram_00_cd94
+00:cd28 DRUM_PITCH_MODE_NOTE_VALUES_LUT_WRAM
+00:cd94 DRUM_PITCH_MODE_FINETUNE_LUT_WRAM_END
 
 00:ce00 KEY_BUFFER
 ;; 00:ce00 A buffer of the last pressed keys (up to 0xceff)
