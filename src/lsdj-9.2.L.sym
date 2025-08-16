@@ -814,6 +814,7 @@
 ;; 00:1adf Result: DE
 ;; 00:1adf Registers used: A, BC, DE, HL
 ;; 00:1ae0 check that note is in range 0-108 
+;; 00:1ae0:op _VALID_NOTE_RANGE
 00:1ae4 .jump_valid_note_value
 ;; 00:1ae5 store start of pitch LUT in HL. Most of the time, LUT will be at address $cf28, but in drum pitch mode, LUT will be at address $09a8
 00:1af0 .jump_no_carry
@@ -828,7 +829,11 @@
 00:1b1c .jump_multiply_bit_6
 00:1b21 .jump_round_down
 00:1b2a .jump_invalid_note_value
+;; 00:1b32:op _VALID_NOTE_RANGE
+;; 00:1b36:op _VALID_NOTE_RANGE
 00:1b3b .jump_overflow_note_value
+;; 00:1b3b:op _VALID_NOTE_RANGE
+;; 00:1b3f:op _VALID_NOTE_RANGE
 00:1b44 .jump_note_value_too_high
 00:1b56 .jump_return_invalid_note_value
 
@@ -856,8 +861,8 @@
 ;; 00:1c29:op rNR33
 ;; 00:1c2c:op rNR34
 ;; 00:1c2f:op rNR31
-00:1c33 call_00_1c33
 
+00:1c33 jump_check_HF_event_current_channel
 00:1c3b call_check_WAV_HF_event
 00:1c4d call_check_PU2_HF_event
 00:1c5f call_check_PU1_HF_event
@@ -895,9 +900,9 @@
 ;; 00:1d8c:op LOW(ARE_CHANNELS_PLAYING)
 ;; 00:1d90:op HIGH(ARE_CHANNELS_PLAYING)
 
-;; 00:1d99:op BANK(call_02_5f28)
-;; 00:1da0:op BANK(call_02_5f28)
-;; 00:1da2:op call_02_5f28
+;; 00:1d99:op BANK(call_kill_channel_specific)
+;; 00:1da0:op BANK(call_kill_channel_specific)
+;; 00:1da2:op call_kill_channel_specific
 
 ;; 00:1daa:op _SONG_SCREEN
 
@@ -3477,16 +3482,43 @@
 
 02:4254 call_02_4254
 
-02:4276 call_02_4276
+02:4276 call_compute_legato_speed
 02:4276 .code:0010
 
 02:4286 call_apply_L_command
 02:4286 .code:0148
+02:429c .jump_skip_is_drum_pitch_mode
+;; 02:429f If no note has played before, set base note to the lowest possible and make legato happen instantly.
+02:42aa .jump_previous_note_is_defined
+02:42c3 .jump_is_drum_pitch_mode
+02:42c6 .jump_is_not_drum_pitch_mode
+02:42cd .jump_is_table_kill_flag
 ;; 02:42da:op rRAMB
 ;; 02:42dd:op CART_SRAM_ENABLE
 ;; 02:42e0:op rRAMG
 ;; 02:42e6:op rRAMG
-
+;; 02:42ef:op _VALID_NOTE_RANGE
+;; 02:42f8:op _VALID_NOTE_RANGE
+02:42fc .jump_clip_down_note_value
+02:42fd .jump_valid_note_value
+02:42fe .jump_clip_up_note_value
+02:4303 .jump_instant_legato
+02:4318 .jump_skip_reset_slide_speed
+;; 02:4326:op HIGH(PU1_TICK_PITCH_UPDATE_FLAG)
+;; 02:432a:op LOW(PU1_TICK_PITCH_UPDATE_FLAG)
+02:4330 .jump_compute_legato_note_diff
+;; 02:4332:op LOW(PU1_IS_DRUM_PITCH)
+;; 02:4335:op HIGH(PU1_IS_DRUM_PITCH)
+02:434d .jump_is_drum_pitch_2
+;; 02:434d:op HIGH(DRUM_PITCH_MODE_NOTE_VALUES_LUT_WRAM)
+;; 02:4352:op LOW(DRUM_PITCH_MODE_NOTE_VALUES_LUT_WRAM)-1
+;; 02:4359:op LOW(DRUM_PITCH_MODE_NOTE_VALUES_LUT_WRAM)-1
+;; 02:4363:op HIGH(DRUM_PITCH_MODE_FINETUNE_LUT_WRAM)
+;; 02:4368:op LOW(DRUM_PITCH_MODE_FINETUNE_LUT_WRAM)-1
+02:436f .jump_update_slide_speed
+02:43a7 .jump compute_legato_speed
+02:43b3 .jump_legato_downwards
+02:43bc .jump_update_legato_speed
 02:43ce call_cpl_inc_hl
 ;; 02:43ce Sets HL to its negative (one's compliment) and adds 1.
 ;; 02:43ce Entry conditions: HL = value
@@ -3514,6 +3546,8 @@
 02:4679 call_apply_A_command
 02:4679 .code:004e
 
+02:468b .jump_valid_table_value
+
 02:46c7 call_reset_retrig_and_kill_flags_current_channel
 02:46c7 .code:0011
 
@@ -3525,7 +3559,7 @@
 
 ;; 02:46f4:op rNR32
 
-02:46f7 call_apply_F_command
+02:46f7 jump_apply_F_command
 02:46f7 .code:0038
 02:4704 .jump_apply_F_command_PU1
 02:4715 .jump_apply_F_command_PU2
@@ -3539,7 +3573,7 @@
 ;; 02:4744:op HIGH(RETRIG_COUNTDOWN_TIMERS)
 ;; 02:4749:op LOW(RETRIG_COUNTDOWN_TIMERS)
 
-02:4753 call_retrig_and_kill
+02:4753 call_retrig_and_kill_tick
 02:4753 .code:003a
 02:4758 .jump_for_loop_flags
 02:476c jump_apply_C_command
@@ -3716,8 +3750,8 @@
 
 02:4cbf call_02_4cbf
 
-02:4d71 call_02_4d71
-
+02:4d71 call_start_instruments_tick
+02:4d88 .jump_start_pu_instruments
 02:4da9 call_02_4da9
 
 02:4e17 call_02_4e17
@@ -3954,17 +3988,28 @@
 
 02:55ce call_02_55ce
 
-02:55e5 call_02_55e5
+02:55e5 call_advance_current_table_step_mode
 ;; 02:55e5:op HIGH(PU1_TABLE_STEP_MODE)
 
-02:5621 call_02_5621
+;; 02:5604:op LOW(PLAYING_TABLE_CMD_1_ADDRESSES)
+;; 02:5608:op LOW(PLAYING_TABLE_CMD_VALUE_1_ADDRESSES)
+;; 02:560c:op LOW(PLAYING_TABLE_CMD_2_ADDRESSES)
+;; 02:5610:op LOW(PLAYING_TABLE_CMD_VALUE_2_ADDRESSES)
+
+02:5615 .jump_table_just_started
+
+02:5621 call_start_table_tick_mode
 ;; 02:5621:op HIGH(PU1_TABLE_STEP_MODE)
 
+;; 02:564c HL contains the row offset of the playing table compared to the start of the table data SRAM
 ;; 02:564c Assume bank is set to bank for _SRAM_TABLE_TRANSPOSE
 ;; 02:564c:op _SRAM_TABLE_TRANSPOSE
 
 ;; 02:5656:op LOW(PLAYING_TABLE_TRANSPOSE_ADDRESSES)
 ;; 02:5659:op HIGH(PLAYING_TABLE_TRANSPOSE_ADDRESSES)
+
+;; 02:5662:op LOW(PLAYING_TABLE_CMD_1_ADDRESSES)
+;; 02:566b:op LOW(PLAYING_TABLE_CMD_VALUE_1_ADDRESSES)
 
 ;; 02:568e Assume bank is set to bank for _SRAM_TABLE_CMDS_2
 ;; 02:568e:op _SRAM_TABLE_CMDS_2
@@ -3977,7 +4022,8 @@
 
 02:56f5 call_set_initial_envelope_instrument
 
-02:5715 call_02_5715
+02:5715 call_set_table_volume_col_starting_address
+;; 02:5727 HL contains the row offset of the playing table compared to the start of the table data SRAM
 ;; 02:5727 Assume bank is set to bank for _SRAM_TABLE_VOLS
 ;; 02:5727:op _SRAM_TABLE_VOLS
 
@@ -4022,7 +4068,7 @@
 
 ;; 02:5845 Return
 
-02:5847 call_02_5847
+02:5847 call_set_table_transpose_col_starting_address
 ;; 02:5859 Assume bank is set to bank for _SRAM_TABLE_TRANSPOSE
 ;; 02:5859:op _SRAM_TABLE_TRANSPOSE
 
@@ -4116,11 +4162,14 @@
 02:5f24 .jump_write
 ;; 02:5f25:op rNR43
 
-02:5f28 call_02_5f28
+02:5f28 call_kill_channel_specific
+02:5f3e .jump_kill_PU2
+02:5f51 .jump_kill_WAV
+02:5f5f .jump_kill_PU1
 
 ;; 02:5f57:op rNR30
 
-02:5f71 call_02_5f71
+02:5f71 call_kill_WAV
 
 02:5f88 call_02_5f88
 02:5f88 .code:001c
@@ -4166,7 +4215,9 @@
 02:61b8 .jump_write_bits_to_register
 ;; 02:61b8:op rNR51
 ;; 02:61bc:op rNR51
-02:61bf call_02_61bf
+02:61bf call_copy_synth_frame_to_buffer
+;; 02:61c7:op HIGH(_SRAM_WAVE_FRAMES)
+;; 02:61ce SRAM bank of _SRAM_WAVE_FRAMES
 ;; 02:61d0:op rRAMB
 ;; 02:61d3:op CART_SRAM_ENABLE
 ;; 02:61d6:op rRAMG
@@ -4189,6 +4240,14 @@
 ;; 02:62e7:op HIGH(PU1_TICK_PITCH_UPDATE_FLAG)
 
 02:62f3 jump_apply_F_command_WAV
+02:6318 .jump_kit_is_playing
+02:6354 .jump_offset_under_16
+02:6379 .jump_positive_offset
+02:637d .jump_for_loop_4
+02:6385 .jump_compute_offset_kit_1
+02:63bd .jump_apply_offset_kit_1
+02:6408 .jump_apply_offset_kit_2
+02:643d .jump_return
 
 02:6441 call_rand_char_range
 ;; 02:6441 Get a random char between 0 and a value.
@@ -4228,7 +4287,7 @@
 ;; 02:6529:op LOW(RETRIG_COUNTDOWN_TIMERS)
 ;; 02:652d:op HIGH(RETRIG_COUNTDOWN_TIMERS)
 
-02:653f call_02_653f
+02:653f call_kill_channel
 
 ;; 02:6546:op LOW(RETRIG_AND_KILL_FLAGS)
 ;; 02:654a:op HIGH(RETRIG_AND_KILL_FLAGS)
@@ -4262,6 +4321,9 @@
 
 ;; 02:65f1:op LOW(RETRIG_AND_KILL_FLAGS)
 ;; 02:65f5:op HIGH(RETRIG_AND_KILL_FLAGS)
+
+02:6607 .jump_kill_channel
+02:660a .jump_return
 
 02:660e call_apply_P_command
 02:660e .code:0019
@@ -4298,8 +4360,8 @@
 ;; 02:671d:op LOW(NOTE_COUNTDOWNS)
 ;; 02:6721:op HIGH(NOTE_COUNTDOWNS)
 
-;; 02:6732:op LOW(ram_00_c2ec)
-;; 02:6736:op HIGH(ram_00_c2ec)
+;; 02:6732:op LOW(TABLE_JUST_STARTED_FLAGS)
+;; 02:6736:op HIGH(TABLE_JUST_STARTED_FLAGS)
 
 ;; 02:6748:op LOW(PU1_SWEEP)
 ;; 02:674c:op HIGH(PU1_SWEEP)
@@ -4317,15 +4379,25 @@
 
 02:683d jump_table_02_683d
 
-02:68c8 call_02_68c8
+02:68c8 call_E_command_convert_envelope_value_to_length
+;; 02:68ce:op LOW(data_E_command_speed_LUT)
+;; 02:68d2:op HIGH(data_E_command_speed_LUT)
 
-02:68dc data_02_68dc
+02:68dc data_E_command_speed_LUT
 02:68dc .data:0008
 
-02:68e4 call_02_68e4
-02:692d jump_update_NOI_envelope
+02:68e4 call_E_command_set_envelope_direction
+02:68f2 .jump_downwards_envelope
+02:68f4 .jump_upwards_envelope
 02:68f7 jump_update_PU1_envelope
+02:6905 .jump_timer_disabled
+02:692b .jump_envelope_timer_is_0
+02:692d jump_update_NOI_envelope
+02:693b .jump_timer_disabled
+02:6961 .jump_envelope_timer_is_0
 02:6963 jump_update_PU2_envelope
+02:6971 .jump_timer_disabled
+02:6997 .jump_envelope_timer_is_0
 02:6999 call_02_6999
 
 ;; 02:69bc:op _CHAIN_SCREEN
@@ -4677,7 +4749,7 @@
 ;; 02:7bca:op LOW(ARE_CHANNELS_PLAYING)
 ;; 02:7bce:op HIGH(ARE_CHANNELS_PLAYING)
 
-02:7c4a call_apply_E_command
+02:7c4a call_apply_E_command_on_instrument_start
 
 ;; 02:7c4e:op LOW(PHRASE_COMMAND_VALUES)
 ;; 02:7c52:op HIGH(PHRASE_COMMAND_VALUES)
@@ -12537,7 +12609,12 @@
 00:c0ea WAV_NOTE_VALUE_PLAYING
 00:c0eb NOI_NOTE_VALUE_PLAYING
 
-00:c0ec ram_00_c0ec
+00:c0ec DRUM_PITCH_MODE_BASE_NOTE_VALUES_PLAYING
+;; 00:c0ec Note values before the drum pitch mode is applied. Unused outside of drum pitch mode.
+00:c0ec PU1_DRUM_PITCH_MODE_BASE_NOTE_VALUE_PLAYING
+00:c0ed PU2_DRUM_PITCH_MODE_BASE_NOTE_VALUE_PLAYING
+00:c0ee WAV_DRUM_PITCH_MODE_BASE_NOTE_VALUE_PLAYING
+00:c0ef NOI_DRUM_PITCH_MODE_BASE_NOTE_VALUE_PLAYING
 
 00:c0f0 CHANNEL_UPDATED_PHRASE_ROW_FLAGS
 00:c0f0 PU1_UPDATED_PHRASE_ROW_FLAG
@@ -12612,15 +12689,25 @@
 00:c12e PLAYING_NOI_PHRASE_CMD_VALUE_ADDRESS_LOW
 00:c12f PLAYING_NOI_PHRASE_CMD_VALUE_ADDRESS_HIGH
 
-00:c130 ram_00_c130
+00:c130 PLAYING_TABLE_CMD_VALUE_1_ADDRESSES
+00:c130 PLAYING_PU1_TABLE_CMD_VALUE_1_ADDRESS_LOW
+00:c131 PLAYING_PU1_TABLE_CMD_VALUE_1_ADDRESS_HIGH
+00:c132 PLAYING_PU2_TABLE_CMD_VALUE_1_ADDRESS_LOW
+00:c133 PLAYING_PU2_TABLE_CMD_VALUE_1_ADDRESS_HIGH
+00:c134 PLAYING_WAV_TABLE_CMD_VALUE_1_ADDRESS_LOW
+00:c135 PLAYING_WAV_TABLE_CMD_VALUE_1_ADDRESS_HIGH
+00:c136 PLAYING_NOI_TABLE_CMD_VALUE_1_ADDRESS_LOW
+00:c137 PLAYING_NOI_TABLE_CMD_VALUE_1_ADDRESS_HIGH
 
-00:c136 PLAYING_TABLE_CMD_VALUE_1_ADDRESS_LOW
-00:c137 PLAYING_TABLE_CMD_VALUE_1_ADDRESS_HIGH
-
-00:c138 ram_00_c138
-
-00:c13e PLAYING_TABLE_CMD_VALUE_2_ADDRESS_LOW
-00:c13f PLAYING_TABLE_CMD_VALUE_2_ADDRESS_HIGH
+00:c138 PLAYING_TABLE_CMD_VALUE_2_ADDRESSES
+00:c138 PLAYING_PU1_TABLE_CMD_VALUE_2_ADDRESS_LOW
+00:c139 PLAYING_PU1_TABLE_CMD_VALUE_2_ADDRESS_HIGH
+00:c13a PLAYING_PU2_TABLE_CMD_VALUE_2_ADDRESS_LOW
+00:c13b PLAYING_PU2_TABLE_CMD_VALUE_2_ADDRESS_HIGH
+00:c13c PLAYING_WAV_TABLE_CMD_VALUE_2_ADDRESS_LOW
+00:c13d PLAYING_WAV_TABLE_CMD_VALUE_2_ADDRESS_HIGH
+00:c13e PLAYING_NOI_TABLE_CMD_VALUE_2_ADDRESS_LOW
+00:c13f PLAYING_NOI_TABLE_CMD_VALUE_2_ADDRESS_HIGH
 
 00:c140 PLAYING_PHRASE_INSTRUMENT_ADDRESSES
 00:c140 PLAYING_PU1_PHRASE_INSTRUMENT_ADDRESS_LOW
@@ -12805,9 +12892,12 @@
 00:c246 WAV_TABLE_COL_2_RETRIG_COUNTDOWN_TIMER
 00:c247 NOI_TABLE_COL_2_RETRIG_COUNTDOWN_TIMER
 
-00:c248 PU1_LEGATO_NOTE_DIFFERENCE ;TODO: two bytes, figure out what the first byte is for 
-00:c24a PU2_LEGATO_NOTE_DIFFERENCE
-00:c24c WAV_LEGATO_NOTE_DIFFERENCE
+00:c248 PU1_LEGATO_FINETUNE_DIFFERENCE
+00:c249 PU1_LEGATO_NOTE_DIFFERENCE
+00:c24a PU2_LEGATO_FINETUNE_DIFFERENCE
+00:c24b PU2_LEGATO_NOTE_DIFFERENCE
+00:c24c WAV_LEGATO_FINETUNE_DIFFERENCE
+00:c24d WAV_LEGATO_NOTE_DIFFERENCE
 
 00:c250 INSTRUMENTS_TABLE_STEP_POSITION_1
 ;;00:c250 Each byte corresponds to the step advance of the first column of the table in corresponding instrument
@@ -12844,13 +12934,11 @@
 
 00:c2eb ram_00_c2eb
 
-00:c2ec ram_00_c2ec
-
-00:c2ed ram_00_c2ed
-
-00:c2ee ram_00_c2ee
-
-00:c2ef ram_00_c2ef
+00:c2ec TABLE_JUST_STARTED_FLAGS
+00:c2ec PU1_TABLE_JUST_STARTED_FLAG
+00:c2ed PU2_TABLE_JUST_STARTED_FLAG
+00:c2ee WAV_TABLE_JUST_STARTED_FLAG
+00:c2ef NOI_TABLE_JUST_STARTED_FLAG
 
 00:c2f0 RETRIG_AND_KILL_FLAGS
 00:c2f0 PU1_PHRASE_RETRIG_AND_KILL_FLAG
@@ -13232,13 +13320,13 @@
 00:c4e8 ram_00_c4e8
 00:c4e9 ram_00_c4e9
 00:c4ea ram_00_c4ea
-00:c4eb ram_00_c4eb
 
-00:c4ec ram_00_c4ec
-00:c4ed ram_00_c4ed
-00:c4ee ram_00_c4ee
+00:c4eb KIT_1_OFFSET_HIGH
+00:c4ec KIT_1_OFFSET_LOW
+00:c4ed KIT_2_OFFSET_HIGH
+00:c4ee KIT_2_OFFSET_LOW
+
 00:c4ef ram_00_c4ef
-
 00:c4f0 ram_00_c4f0
 00:c4f1 ram_00_c4f1
 00:c4f2 ram_00_c4f2
@@ -13356,13 +13444,10 @@
 
 00:c68b ram_00_c68b
 
-00:c68d ram_00_c68d
-
-00:c68e ram_00_c68e
-
-00:c68f ram_00_c68f
-
-00:c690 ram_00_c690
+00:c68d CURRENT_LEGATO_TARGET_NOTE_VALUE
+00:c68e CURRENT_LEGATO_STARTING_NOTE_VALUE
+00:c68f CURRENT_LEGATO_FINETUNE_DIFFERENCE
+00:c690 CURRENT_LEGATO_NOTE_DIFFERENCE
 
 00:c691 ram_00_c691
 
@@ -13476,17 +13561,16 @@
 
 00:c8e4 CURRENT_CHANNEL_TABLE_HAS_PLAYED_ADDRESS
 
-00:c8e6 CURRENT_CHANNEL_TBLE_GROOVE_ROW_ADDRESS
+00:c8e6 CURRENT_CHANNEL_TABLE_GROOVE_ROW_ADDRESS
 
-00:c8e8 CURRENT_CHANNEL_TABLE_ROW_COL_1_ADDRESS
-
-00:c8ee CURRENT_CHANNEL_TABLE_VOL_COUNTDOWN_ADDRESS
+00:c8e8 CURRENT_CHANNEL_TABLE_ROW_CMD_1_ADDRESS
 
 00:c8ea CURRENT_CHANNEL_PLAYING_PHRASE_ADDRESS
 ;; 00:c8ea The address of the currently playing phrase for the current channel
 
 00:c8ec CURRENT_CHANNEL_CURRENT_NOTE_ADDRESS
 ;; 00:c8ec The address of the currently playing note for the current channel
+00:c8ee CURRENT_CHANNEL_TABLE_VOL_COUNTDOWN_ADDRESS
 
 00:c8f0 ram_00_c8f0
 00:c8f1 ram_00_c8f1
@@ -13937,7 +14021,7 @@
 ;; 00:cbfb gbdk 2.95 libc/gb/font.ms:.bg_colour
 
 00:cd28 DRUM_PITCH_MODE_NOTE_VALUES_LUT_WRAM
-00:cd94 DRUM_PITCH_MODE_FINETUNE_LUT_WRAM_END
+00:cd94 DRUM_PITCH_MODE_FINETUNE_LUT_WRAM
 
 00:ce00 KEY_BUFFER
 ;; 00:ce00 A buffer of the last pressed keys (up to 0xceff)
@@ -13958,6 +14042,9 @@
 
 00:ff8e CURRENT_BANK
 ;; 00:ff8e Used to store the current bank number for banked calls.
+
+00:ff8f COMMAND_VALUE
+;; 00:ff8f Value of the command being currently applied.
 
 00:ff90 GAMEBOY_TYPE
 ;; 00:ff90 Indicates whether the current model is GameBoy Color or original
