@@ -90,8 +90,12 @@
 ;; 00:018d:op end_refresh_oam - start_refresh_oam
 00:018f _code_start_4
 ;; 00:0195 Skip installing interrupt routines
+;; 00:01a1:op rLCDC
 ;; 00:01a6 V-Blank on, don't enable serial I/O yet
 ;; 00:01aa Don't turn sound off yet
+;; 00:01ab:op rSC
+;; 00:01af:op rSB
+;; 00:01b3:op rSC
 ;; 00:01b5 Skip erasing the malloc list and gsinit
 
 00:01ba data_00_01ba
@@ -255,10 +259,12 @@
 
 00:065f jump_pop_and_return_timer_overflow
 00:0662 jump_return_timer_overflow
+;; 00:0662:op rSTAT
 
 00:066a call_WAV_kit_advance_slide_and_vibrato
 
 00:069d jump_silky_WAV_update
+;; 00:069d:op rDIV
 00:06af .jump_is_double_speed
 ;; 00:06b0 HL contains time elapsed since last cycle, in units of 64 CPU cycles
 ;; 00:06c5 BC represents the period of the wav channel note, in units of 64 CPU cycles
@@ -271,8 +277,9 @@
 00:0732 .jump_convert_to_DMG_div_cycles
 00:0745 .jump_check_div_value
 00:0749 .jump_wait_for_div_sync_frame
-
+;; 00:0749:op rDIV
 00:075a call_update_synth_frame
+;; 00:0773:op rDIV
 ;; 00:077f:op rNR51
 ;; 00:0785:op rNR51
 ;; 00:0788:op rNR30
@@ -645,6 +652,8 @@
 ;; 00:1454 Does nothing.
 ;; 00:1454 "ld b, b" can be used for debugger breakpoints.
 
+;; 00:148c:op _SYNC_KEYBOARD
+
 00:149a call_read_low_external_ram
 ;; 00:149a Reads a byte from external RAM (bank 0xf or less).
 ;; 00:149a
@@ -783,6 +792,22 @@
 ;; 00:17e3 Return
 
 00:17e4 call_00_17e4
+00:1809 on_jump_vblank_interrupt
+;; 00:1814:op rTIMA
+
+;; 00:1876:op rP1
+;; 00:1878:op rP1
+;; 00:187a:op rP1
+;; 00:1884:op rP1
+;; 00:1886:op rP1
+;; 00:1888:op rP1
+;; 00:188a:op rP1
+;; 00:188c:op rP1
+;; 00:188e:op rP1
+;; 00:1890:op rP1
+;; 00:189b:op rP1
+;; 00:189d:op HIGH(KEY_BUFFER)
+;; 00:18b0:op HIGH(KEY_BUFFER)
 
 00:193d call_compute_vibrato_pitch_offset
 ;; 00:193d Computes the offset to pitch due to a vibrato of shape E and current phase at A, and depth pointer at HL.
@@ -871,7 +896,7 @@
 00:1c71 .code:0030
 
 00:1ca1 call_check_new_keys
-;; 00:1ca1 Check new keypresses in the buffer and update CURRENT_KEY_PRESS_COUNT.
+;; 00:1ca1 Check new keypresses in the buffer and update CURRENT_KEY_BUFFER_INDEX.
 ;; 00:1ca1 Registers used: A, E, HL
 
 ;; 00:1ca9:op HIGH(KEY_BUFFER)
@@ -932,6 +957,7 @@
 00:1ebd call_00_1ebd
 
 00:1f51 call_00_1f51
+;; 00:1f52:op rSC
 
 00:1f8c call_rom_test
 ;; 00:1f8c Check the ROM image for integrity by recalculating the global checksum.
@@ -970,11 +996,14 @@
 00:207e .call_sram_test_address_1
 00:2090 .call_sram_test_address_2
 
-00:2092 call_00_2092
+00:2092 call_cpu_too_busy
 
 ;; 00:2096:op BANK(call_02_7030)
 ;; 00:209d:op BANK(call_02_7030)
 ;; 00:209f:op call_02_7030
+
+;; 00:20a2:op BANK(data_command_help_too_busy_error_string)
+;; 00:20ab:op data_command_help_too_busy_error_string
 
 00:20bd call_read_song_chain_fast
 ;; 00:20bd Read a song chain number from a row/channel.
@@ -1038,13 +1067,21 @@
 ;; 00:22c8:op BANK(call_update_audio_tick)
 ;; 00:22ca:op call_update_audio_tick
 
+;; 00:22dc:op rSC
+
+00:22fc jump_return_tick_processing
+
 00:2300 call_00_2300
+
+;; 00:2305:op _SYNC_LSDJ
 
 ;; 00:235f:op BANK(call_1c_72bf)
 ;; 00:2366:op BANK(call_1c_72bf)
 ;; 00:2368:op call_1c_72bf
 
-00:237d call_00_237d
+00:237d call_sync_analog_in
+;; 00:2380:op rSB
+;; 00:2446:op rSC
 
 00:245b call_00_245b
 ;; 00:2460:op _CRASH_SCREEN
@@ -1672,7 +1709,8 @@
 00:32ef .font_load_find_slot
 00:3301 .font_load_found
 00:3325 .font_load_exit
-
+;; 00:3325:op rLCDC
+;; 00:332b:op rLCDC
 00:332e font_copy_current
 ;; 00:332e gbdk 2.95 libc/gb/font.ms:font_copy_current (with modifications)
 ;; 00:332e Copy the tiles from the current font into VRAM.
@@ -1730,8 +1768,11 @@
 ;; 00:33d8 gbdk 2.95 libc/gb/font.ms:.tmode (with modifications)
 ;; 00:33d8 Enter text mode.
 ;; 00:33d8 Registers used: A
+;; 00:33d9:op rLCDC
 ;; 00:33df Skip removing interrupts since they're unused
 00:33e2 .tmode_1
+;; 00:33e5:op rLCDC
+;; 00:33eb:op rLCDC
 
 00:33ef tmode_out
 ;; 00:33ef gbdk 2.95 libc/gb/font.ms:.tmode_out (with modifications)
@@ -1750,6 +1791,8 @@
 ;; 00:3427 Enable speed switch (CGB only).
 ;; 00:3427 Registers used: AF, HL
 
+;; 00:3436:op rP1
+
 00:3442 call_00_3442
 00:3442 .code:0028
 
@@ -1760,13 +1803,19 @@
 
 ;; 00:346a:op _IO_SENDING
 
+;; 00:3471:op rSC
+;; 00:3476:op rSB
+;; 00:347a:op rSC
+
 00:347d receive_byte
 ;; 00:347d gbdk 2.95 libc/gb/serial.s:.receive_byte/_receive_byte
 ;; 00:347d Receive byte from the serial port in IO_IN.
 ;; 00:347d Registers used: A
 
 ;; 00:347d:op _IO_RECEIVING
-
+;; 00:3483:op rSC
+;; 00:3487:op rSB
+;; 00:348b:op rSC
 00:348e set_mode
 ;; 00:348e gbdk 2.95 libc/gb/crt0.s:.set_mode
 ;; 00:348e Sets the current mode. Will jump to the initialization routine.
@@ -1779,8 +1828,11 @@
 ;; 00:349e Registers used: A
 ;; 00:349e -
 ;; 00:349e The labels in this subroutine are not local since they are possibly referenced elsewhere
+;; 00:349e:op rLCDC
 00:34a2 _display_off_1
 00:34a8 _display_off_2
+;; 00:34ae:op rLCDC
+;; 00:34b2:op rLCDC
 
 00:34b5 start_refresh_oam
 ;; 00:34b5 gbdk 2.95 libc/gb/crt0.s:.start_refresh_OAM (with modifications)
@@ -1801,6 +1853,8 @@
 ;; 00:34c0 Serial interrupt handler.
 
 ;; 00:34c7:op _IO_RECEIVING
+;; 00:34cb:op rSB
+;; 00:34d6:op rSB
 ;; 00:34d8:op _DT_RECEIVING
 
 00:34d2 .serial_io_10
@@ -1813,6 +1867,7 @@
 00:34e2 .serial_io_12
 ;; 00:34e2 Skip using external clock and replying with idle byte
 00:34e5 .serial_io_99
+;; 00:34e7:op rSC
 ;; 00:34e9 TODO: document return handler at 00:1482
 
 00:34ec _mode
@@ -2106,11 +2161,15 @@
 
 00:3906 vbl
 ;; 00:3906 gbdk 2.95 libc/gb/drawing.s:.vbl
+;; 00:3906:op rLCDC
 00:3906 .code:000b
+;; 00:390a:op rLCDC
 
 00:3911 lcd
 ;; 00:3911 gbdk 2.95 libc/gb/drawing.s:.lcd
 00:3911 .code:000d
+;; 00:3917:op rLCDC
+;; 00:391b:op rLCDC
 
 00:391e jpad
 ;; 00:391e gbdk 2.95 libc/gb/pad.s:.jpad (with modifications)
@@ -2129,6 +2188,18 @@
 ;; 00:391e       0x01: Right
 ;; 00:391e
 ;; 00:391e Registers used: A, E
+;; 00:3921:op rP1
+;; 00:3923:op rP1
+;; 00:3925:op rP1
+;; 00:392f:op rP1
+;; 00:3931:op rP1
+;; 00:3933:op rP1
+;; 00:3935:op rP1
+;; 00:3937:op rP1
+;; 00:3939:op rP1
+;; 00:393b:op rP1
+;; 00:3946:op rP1
+
 ;; 00:394a Use E for return status instead of A like in gbdk
 ;; 00:394a The _joypad subroutine handles this in gbdk
 ;; 00:394a This is a little faster
@@ -2188,6 +2259,7 @@
 ;; 00:399d Entry conditions: B = value
 ;; 00:399d Registers used: A, B, DE, HL
 00:399d .code:0010
+;; 00:399d:op rLCDC
 ;; 00:39a3:op _SCRN0
 00:39a8 .init_wtt_1
 ;; 00:39a8:op _SCRN1
@@ -2234,6 +2306,7 @@
 ;; 00:39e4
 ;; 00:39e4 Registers used: A, BC, DE, HL
 00:39e4 .code:0011
+;; 00:39e5:op rLCDC
 ;; 00:39eb:op _SCRN0
 00:39f0 .set_xy_wtt_1
 ;; 00:39f0:op _SCRN1
@@ -2242,6 +2315,7 @@
 ;; 00:39f5 gbdk 2.95 libc/gb/set_xy_t.s:.set_xy_btt
 ;; 00:39f5 Store background tile table.
 ;; 00:39f5 See: set_xy_wtt
+;; 00:39f6:op rLCDC
 ;; 00:39fc:op _SCRN0
 00:3a01 .set_xy_btt_1
 ;; 00:3a01 Skip jump to the next instruction
@@ -3465,6 +3539,8 @@
 02:4000 call_02_4000
 02:4000 .code:00e6
 
+02:4033 call_apply_S_command_kit
+
 02:40e6 call_02_40e6
 
 02:410c call_02_410c
@@ -3531,14 +3607,22 @@
 ;; 02:43d4 Increment
 ;; 02:43d7 Return
 
-02:43d8 data_02_43d8
+02:43d8 data_P_command_speed_LUT
 02:43d8 .data:0200
 
-02:45d8 call_02_45d8
+02:45d8 call_apply_P_command_PU_WAV
 02:45d8 .code:005f
+02:45fb .jump_apply_P_command_not_kit
+02:461b .jump_pitch_hf_mode
+02:462b .jump_apply_P_command_kit
 
-02:4637 call_02_4637
+02:4637 call_update_noise_shape
 
+;; 02:4642:op _VALID_NOISE_SHAPE_RANGE
+;; 02:4646:op _VALID_NOISE_SHAPE_RANGE
+;; 02:464f:op _VALID_NOISE_SHAPE_RANGE
+;; 02:4661:op _START_SHORT_NOISE_SHAPE_RANGE
+;; 02:4665:op _START_SHORT_NOISE_SHAPE_RANGE
 ;; 02:4670:op rNR42
 ;; 02:4672:op rNR44
 ;; 02:4676:op rNR44
@@ -3582,9 +3666,23 @@
 ;; 02:4790:op _Z_COMMAND
 02:479c .jump_no_carry
 02:47a2 data_command_handling_jump_addresses_table
-02:47a2 .data:0026
-02:47c8 jump_apply_Z_command
+;; 02:47a2:replace:0004 dw $0000, call_apply_A_command    ; 02:47a2
+;; 02:47a6:replace:0004 dw $0000, jump_apply_C_command    ; 02:47a6
+;; 02:47aa:replace:0004 dw $0000, jump_apply_E_command    ; 02:47aa
+;; 02:47ae:replace:0004 dw jump_apply_F_command, $0000    ; 02:47ae
+;; 02:47b2:replace:0004 dw $0000, call_apply_K_command    ; 02:47b2
+;; 02:47b6:replace:0004 dw call_apply_L_command, call_apply_M_command    ; 02:47b6
+;; 02:47ba:replace:0004 dw call_apply_O_command, call_apply_P_command    ; 02:47ba
+;; 02:47be:replace:0004 dw call_apply_R_command, jump_apply_S_command    ; 02:47be
+;; 02:47c2:replace:0004 dw call_apply_T_command, jump_apply_V_command    ; 02:47c2
+;; 02:47c6:replace:0002 dw jump_apply_W_command    ; 02:47c6
+
+02:47c8 jump_apply_W_command
 02:47c8 .code:0077
+
+02:4812 jump_apply_S_command
+02:4823 .jump_apply_S_command_NOI
+02:4828 .jump_apply_S_command_PU1
 
 02:483f call_increment_current_channel_phrase_addresses
 ;; 02:483f Increment addresses for the current channel relating to phrases.
@@ -3599,9 +3697,13 @@
 
 02:485a call_02_485a
 02:485a .code:0024
-
+;; 02:485a:op LOW(PLAYING_PHRASE_ROWS)
+;; 02:485f:op LOW(PLAYING_CHAIN_ROWS)
 ;; 02:4864:op LOW(NOTE_COUNTDOWNS)
-
+;; 02:4869:op LOW(CHANNEL_GROOVES_1)
+;; 02:486e:op LOW(PLAYING_GROOVE_ROWS)
+;; 02:4873:op LOW(PLAYING_PHRASES)
+;; 02:4878:op LOW(CURRENT_NOTES)
 02:487e call_02_487e
 02:487e .code:002d
 ;; 02:4885:op HIGH(HAS_PLAYED_CHANNEL_TABLES)
@@ -3846,11 +3948,18 @@
 02:5066 .code:0045
 ;; 02:506b:op rRAMB
 
-02:50ab call_02_50ab
+02:50ab call_read_command_table_col_1
 02:50ab .code:0038
+;; 02:50c4:op _H_COMMAND
+;; 02:50c7:op _Z_COMMAND
 
-02:50e3 call_02_50e3
+;; 02:50db:op TABLES_COL_1_LAST_PLAYED_COMMAND_VALUE - TABLES_COL_1_LAST_PLAYED_COMMAND
+
+02:50e3 call_read_command_table_col_2
 02:50e3 .code:0038
+;; 02:50fc:op _H_COMMAND
+;; 02:50ff:op _Z_COMMAND
+;; 02:5113:op TABLES_COL_2_LAST_PLAYED_COMMAND_VALUE - TABLES_COL_2_LAST_PLAYED_COMMAND
 
 02:511b call_read_channel_value
 ;; 02:511b Read a channel value.
@@ -3879,7 +3988,7 @@
 ;; 02:512b Return
 ;; 02:512b:op rRAMG
 
-02:512f call_advance_step_table_current_instrument
+02:512f call_advance_table_current_instrument
 02:512f .code:01e0
 ;; 02:512f:op HIGH(PU1_TABLE_STEP_MODE)
 ;; 02:5146:op LOW(INSTRUMENTS_TABLE_STEP_POSITION_1) 
@@ -3907,6 +4016,14 @@
 ;; 02:5209:op HIGH(HAS_PLAYED_CHANNEL_TABLES)
 02:5215 .jump_note_countdown_is_0
 ;; 02:521d:op rRAMB
+02:5224 .jump_read_command_col_1
+;; 02:522b:op _H_COMMAND
+02:5241 .jump_col_1_B_command
+;; 02:5241:op _B_COMMAND
+02:5252 .jump_col_1_C_command
+;; 02:5252:op _C_COMMAND
+02:5263 .jump_col_1_G_command
+;; 02:5263:op _G_COMMAND
 02:5307 jump_decrease_note_countdown_and_return
 ;; 02:5307:op HIGH(NOTE_COUNTDOWNS)
 
@@ -4225,13 +4342,18 @@
 
 02:620e call_apply_M_command
 02:620e .code:0233
+;; 02:620e First, handle the left channel
 ;; 02:620e:op rNR50
+;; 02:6211:op MASTER_VOLUME_OFFSET_LUT
+;; 02:6223 Repeat process with right channel
 ;; 02:6223:op rNR50
 ;; 02:6232:op rNR50
 ;; 02:6235:op rNR50
-
+02:6238 jump_P_command_step_mode
 ;; 02:625f:op LOW(PU1_PITCH_PERIOD_LOW)
 ;; 02:6263:op HIGH(PU1_PITCH_PERIOD_LOW)
+
+02:6297 .jump_is_not_kit
 
 ;; 02:62ac:op LOW(PU1_SLIDE_FINETUNE_OFFSET)
 ;; 02:62b0:op HIGH(PU1_SLIDE_FINETUNE_OFFSET)
@@ -4272,20 +4394,20 @@
 ;; 02:64a3:op LOW(PU1_RESYNC_SPEED)
 ;; 02:64a7:op HIGH(PU1_RESYNC_SPEED)
 
+02:64b4 .jump_apply_R_command_as_retrig
 ;; 02:64c4:op LOW(PU1_CMD_RATE)
 ;; 02:64c8:op HIGH(PU1_CMD_RATE)
-
-;; 02:64e0:op LOW(ram_00_c8cd)
-;; 02:64e4:op HIGH(ram_00_c8cd)
-
+02:64dc .jump_retrig_length_f
+;; 02:64e0:op LOW(RETRIG_TIMER_LENGTHS)
+;; 02:64e4:op HIGH(RETRIG_TIMER_LENGTHS)
 ;; 02:64fc:op LOW(RETRIG_AND_KILL_FLAGS)
 ;; 02:6500:op HIGH(RETRIG_AND_KILL_FLAGS)
-
-;; 02:6512:op LOW(ram_00_c224)
-;; 02:6516:op HIGH(ram_00_c224)
-
+;; 02:6512:op LOW(RETRIG_VOLUME_CHANGES)
+;; 02:6516:op HIGH(RETRIG_VOLUME_CHANGES)
 ;; 02:6529:op LOW(RETRIG_COUNTDOWN_TIMERS)
 ;; 02:652d:op HIGH(RETRIG_COUNTDOWN_TIMERS)
+02:6538 .jump_retrig_from_phrase
+02:653b .jump_return
 
 02:653f call_kill_channel
 
@@ -4327,11 +4449,12 @@
 
 02:660e call_apply_P_command
 02:660e .code:0019
-
+02:6623 .jump_channel_is_not_noise
+02:6626 .jump_return
 02:6627 call_apply_O_command
 02:6627 .code:000a
 
-02:6631 call_02_6631
+02:6631 call_apply_T_command
 02:6631 .code:002b
 
 ;; 02:663d:op LOW(call_07_5d9a)
@@ -4366,8 +4489,8 @@
 ;; 02:6748:op LOW(PU1_SWEEP)
 ;; 02:674c:op HIGH(PU1_SWEEP)
 
-;; 02:676f:op LOW(ram_00_c8cd)
-;; 02:6773:op HIGH(ram_00_c8cd)
+;; 02:676f:op LOW(RETRIG_TIMER_LENGTHS)
+;; 02:6773:op HIGH(RETRIG_TIMER_LENGTHS)
 
 ;; 02:6783:op LOW(RETRIG_AND_KILL_FLAGS)
 ;; 02:6787:op HIGH(RETRIG_AND_KILL_FLAGS)
@@ -4689,6 +4812,7 @@
 
 02:7712 call_02_7712
 02:7712 .code:007f
+;; 02:7723:op rDIV
 
 02:7791 call_02_7791
 
@@ -4767,7 +4891,9 @@
 ;; 02:7ccc:op _E_COMMAND
 
 02:7cd0 data_02_7cd0
-02:7cd0 .data:012b
+02:7cd0 .data:0050
+02:7d20 jump_apply_V_command
+02:7d20 .code:00db
 02:7dfb data_02_7dfb
 02:7dfb .data:0078
 
@@ -12862,7 +12988,19 @@
 00:c222 ram_00_c222
 00:c223 ram_00_c223
 
-00:c224 ram_00_c224
+00:c224 RETRIG_VOLUME_CHANGES
+00:c224 PU1_PHRASE_RETRIG_VOLUME_CHANGE
+00:c225 PU2_PHRASE_RETRIG_VOLUME_CHANGE
+00:c226 WAV_PHRASE_RETRIG_VOLUME_CHANGE
+00:c227 NOI_PHRASE_RETRIG_VOLUME_CHANGE
+00:c228 PU1_TABLE_COL_1_RETRIG_VOLUME_CHANGE
+00:c229 PU2_TABLE_COL_1_RETRIG_VOLUME_CHANGE
+00:c22a WAV_TABLE_COL_1_RETRIG_VOLUME_CHANGE
+00:c22b NOI_TABLE_COL_1_RETRIG_VOLUME_CHANGE
+00:c22c PU1_TABLE_COL_2_RETRIG_VOLUME_CHANGE
+00:c22d PU2_TABLE_COL_2_RETRIG_VOLUME_CHANGE
+00:c22e WAV_TABLE_COL_2_RETRIG_VOLUME_CHANGE
+00:c22f NOI_TABLE_COL_2_RETRIG_VOLUME_CHANGE
 
 00:c230 KILL_COUNTDOWN_TIMERS
 00:c230 PU1_PHRASE_KILL_COUNTDOWN_TIMER
@@ -13055,15 +13193,15 @@
 00:c358 PU2_PITCH_LUT_ADDRESS
 00:c35a WAV_PITCH_LUT_ADDRESS
 
-00:c35c ram_00_c35c
-00:c35d ram_00_c35d
-00:c35e ram_00_c35e
+00:c35c PU1_PITCH_STEP_MODE
+00:c35d PU2_PITCH_STEP_MODE
+00:c35e WAV_PITCH_STEP_MODE
 
 00:c35f PU1_PITCH_TICK_MODE
 00:c360 PU2_PITCH_TICK_MODE
 00:c361 WAV_PITCH_TICK_MODE
 
-00:c362 ram_00_c362
+00:c362 NOISE_PITCH_BEND_SPEED
 
 00:c363 WAV_FRAME_CURRENT_PHASE_LOW
 00:c364 WAV_FRAME_CURRENT_PHASE_HIGH
@@ -13083,21 +13221,88 @@
 00:c36d WAV_PHRASE_COMMAND_VALUE
 00:c36e NOI_PHRASE_COMMAND_VALUE
 
-00:c36f ram_00_c36f
-
-00:c370 ram_00_c370
+00:c36f CURRENT_TABLE_COL_1_COMMAND_VALUE
+00:c370 CURRENT_TABLE_COL_2_COMMAND_VALUE
 
 00:c371 ram_00_c371
 
-00:c375 ram_00_c375
+00:c375 TABLES_COL_1_LAST_PLAYED_COMMAND
+00:c375 TABLE_00_COL_1_LAST_PLAYED_COMMAND
+00:c376 TABLE_01_COL_1_LAST_PLAYED_COMMAND
+00:c377 TABLE_02_COL_1_LAST_PLAYED_COMMAND
+00:c378 TABLE_03_COL_1_LAST_PLAYED_COMMAND
+00:c379 TABLE_04_COL_1_LAST_PLAYED_COMMAND
+00:c37a TABLE_05_COL_1_LAST_PLAYED_COMMAND
+00:c37b TABLE_06_COL_1_LAST_PLAYED_COMMAND
+00:c37c TABLE_07_COL_1_LAST_PLAYED_COMMAND
+00:c37d TABLE_08_COL_1_LAST_PLAYED_COMMAND
+00:c37e TABLE_09_COL_1_LAST_PLAYED_COMMAND
+00:c37f TABLE_0A_COL_1_LAST_PLAYED_COMMAND
+00:c380 TABLE_0B_COL_1_LAST_PLAYED_COMMAND
+00:c381 TABLE_0C_COL_1_LAST_PLAYED_COMMAND
+00:c382 TABLE_0D_COL_1_LAST_PLAYED_COMMAND
+00:c383 TABLE_0E_COL_1_LAST_PLAYED_COMMAND
+00:c384 TABLE_0F_COL_1_LAST_PLAYED_COMMAND
+00:c385 TABLE_10_COL_1_LAST_PLAYED_COMMAND
+00:c386 TABLE_11_COL_1_LAST_PLAYED_COMMAND
+00:c387 TABLE_12_COL_1_LAST_PLAYED_COMMAND
+00:c388 TABLE_13_COL_1_LAST_PLAYED_COMMAND
+00:c389 TABLE_14_COL_1_LAST_PLAYED_COMMAND
+00:c38a TABLE_15_COL_1_LAST_PLAYED_COMMAND
+00:c38b TABLE_16_COL_1_LAST_PLAYED_COMMAND
+00:c38c TABLE_17_COL_1_LAST_PLAYED_COMMAND
+00:c38d TABLE_18_COL_1_LAST_PLAYED_COMMAND
+00:c38e TABLE_19_COL_1_LAST_PLAYED_COMMAND
+00:c38f TABLE_1A_COL_1_LAST_PLAYED_COMMAND
+00:c390 TABLE_1B_COL_1_LAST_PLAYED_COMMAND
+00:c391 TABLE_1C_COL_1_LAST_PLAYED_COMMAND
+00:c392 TABLE_1D_COL_1_LAST_PLAYED_COMMAND
+00:c393 TABLE_1E_COL_1_LAST_PLAYED_COMMAND
+00:c394 TABLE_1F_COL_1_LAST_PLAYED_COMMAND
 
-00:c395 ram_00_c395
+00:c395 TABLES_COL_2_LAST_PLAYED_COMMAND
+00:c395 TABLE_00_COL_2_LAST_PLAYED_COMMAND
+00:c396 TABLE_01_COL_2_LAST_PLAYED_COMMAND
+00:c397 TABLE_02_COL_2_LAST_PLAYED_COMMAND
+00:c398 TABLE_03_COL_2_LAST_PLAYED_COMMAND
+00:c399 TABLE_04_COL_2_LAST_PLAYED_COMMAND
+00:c39a TABLE_05_COL_2_LAST_PLAYED_COMMAND
+00:c39b TABLE_06_COL_2_LAST_PLAYED_COMMAND
+00:c39c TABLE_07_COL_2_LAST_PLAYED_COMMAND
+00:c39d TABLE_08_COL_2_LAST_PLAYED_COMMAND
+00:c39e TABLE_09_COL_2_LAST_PLAYED_COMMAND
+00:c39f TABLE_0A_COL_2_LAST_PLAYED_COMMAND
+00:c3a0 TABLE_0B_COL_2_LAST_PLAYED_COMMAND
+00:c3a1 TABLE_0C_COL_2_LAST_PLAYED_COMMAND
+00:c3a2 TABLE_0D_COL_2_LAST_PLAYED_COMMAND
+00:c3a3 TABLE_0E_COL_2_LAST_PLAYED_COMMAND
+00:c3a4 TABLE_0F_COL_2_LAST_PLAYED_COMMAND
+00:c3a5 TABLE_10_COL_2_LAST_PLAYED_COMMAND
+00:c3a6 TABLE_11_COL_2_LAST_PLAYED_COMMAND
+00:c3a7 TABLE_12_COL_2_LAST_PLAYED_COMMAND
+00:c3a8 TABLE_13_COL_2_LAST_PLAYED_COMMAND
+00:c3a9 TABLE_14_COL_2_LAST_PLAYED_COMMAND
+00:c3aa TABLE_15_COL_2_LAST_PLAYED_COMMAND
+00:c3ab TABLE_16_COL_2_LAST_PLAYED_COMMAND
+00:c3ac TABLE_17_COL_2_LAST_PLAYED_COMMAND
+00:c3ad TABLE_18_COL_2_LAST_PLAYED_COMMAND
+00:c3ae TABLE_19_COL_2_LAST_PLAYED_COMMAND
+00:c3af TABLE_1A_COL_2_LAST_PLAYED_COMMAND
+00:c3b0 TABLE_1B_COL_2_LAST_PLAYED_COMMAND
+00:c3b1 TABLE_1C_COL_2_LAST_PLAYED_COMMAND
+00:c3b2 TABLE_1D_COL_2_LAST_PLAYED_COMMAND
+00:c3b3 TABLE_1E_COL_2_LAST_PLAYED_COMMAND
+00:c3b4 TABLE_1F_COL_2_LAST_PLAYED_COMMAND
 
 00:c3b5 CHANNEL_GROOVES_3
 00:c3b5 PU1_GROOVE_3
 00:c3b6 PU2_GROOVE_3
 00:c3b7 WAV_GROOVE_3
 00:c3b8 NOI_GROOVE_3
+
+00:c3b9 TABLES_COL_1_LAST_PLAYED_COMMAND_VALUE
+
+00:c3d9 TABLES_COL_2_LAST_PLAYED_COMMAND_VALUE
 
 00:c3f9 PU1_PITCH_HF_EVENT
 00:c3fa PU2_PITCH_HF_EVENT
@@ -13411,7 +13616,7 @@
 00:c56e ram_00_c56e
 00:c56f PRELISTEN
 
-00:c570 CURRENT_KEY_PRESS_COUNT
+00:c570 CURRENT_KEY_BUFFER_INDEX
 00:c571 TOTAL_KEY_PRESS_COUNT
 
 00:c572 ram_00_c572
@@ -13526,7 +13731,7 @@
 
 00:c8c3 CURRENT_PHRASE_COMMAND_CURRENT_CHANNEL
 
-00:c8c4 ram_00_c8c4
+00:c8c4 NOI_PITCH_BEND_FLAG
 
 00:c8c5 PU1_CMD_RATE
 00:c8c6 PU2_CMD_RATE
@@ -13538,7 +13743,19 @@
 00:c8cb WAV_CMD_RATE_COUNTDOWN_TIMER
 00:c8cc NOI_CMD_RATE_COUNTDOWN_TIMER
 
-00:c8cd ram_00_c8cd
+00:c8cd RETRIG_TIMER_LENGTHS
+00:c8cd PU1_PHRASE_RETRIG_TIMER_LENGTH
+00:c8ce PU2_PHRASE_RETRIG_TIMER_LENGTH
+00:c8cf WAV_PHRASE_RETRIG_TIMER_LENGTH
+00:c8d0 NOI_PHRASE_RETRIG_TIMER_LENGTH
+00:c8d1 PU1_TABLE_COL_1_RETRIG_TIMER_LENGTH
+00:c8d2 PU2_TABLE_COL_1_RETRIG_TIMER_LENGTH
+00:c8d3 WAV_TABLE_COL_1_RETRIG_TIMER_LENGTH
+00:c8d4 NOI_TABLE_COL_1_RETRIG_TIMER_LENGTH
+00:c8d5 PU1_TABLE_COL_2_RETRIG_TIMER_LENGTH
+00:c8d6 PU2_TABLE_COL_2_RETRIG_TIMER_LENGTH
+00:c8d7 WAV_TABLE_COL_2_RETRIG_TIMER_LENGTH
+00:c8d8 NOI_TABLE_COL_2_RETRIG_TIMER_LENGTH
 
 00:c8d9 ram_00_c8d9
 
@@ -13868,12 +14085,12 @@
 00:cb6b ram_00_cb6b
 
 00:cb6c ram_00_cb6c
-00:cb6d ram_00_cb6d
+00:cb6d CLOCK_SOURCE
 00:cb6e ram_00_cb6e
 00:cb6f ram_00_cb6f
 
 00:cb70 ram_00_cb70
-00:cb71 ram_00_cb71
+00:cb71 NB_TICKS_CURRENTLY_PROCESSING
 00:cb72 ram_00_cb72
 00:cb73 ram_00_cb73
 
@@ -14027,6 +14244,8 @@
 ;; 00:ce00 A buffer of the last pressed keys (up to 0xceff)
 
 00:cf28 PITCH_PERIOD_LUT_WRAM
+
+01:d400 MASTER_VOLUME_OFFSET_LUT
 
 00:ff80 REFRESH_OAM
 ;; 00:ff80 gbdk 2.95 libc/gb/global.s:refresh_OAM
