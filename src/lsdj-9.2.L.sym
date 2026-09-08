@@ -609,8 +609,8 @@
 00:12cd .jump_return
 
 00:12cf _main
-;; 00:12e1:op rNR52
-;; 00:12fa:op rNR52
+;; 00:12e1:op rAUDENA
+;; 00:12fa:op rAUDENA
 ;; 00:12f4:op _GAMEBOY_COLOR
 
 ;; 00:131f:op BANK(call_1c_40f2)
@@ -956,7 +956,7 @@
 
 00:1ebd call_00_1ebd
 
-00:1f51 call_00_1f51
+00:1f51 call_send_analog_out
 ;; 00:1f52:op rSC
 
 00:1f8c call_rom_test
@@ -1051,8 +1051,12 @@
 
 00:2233 call_on_tick
 ;; 00:2233 routine that is called every tick
-;; 00:2265:op rNR52
-;; 00:2269:op rNR50
+00:224d .jump_return_process_previous_tick
+00:2250 .jump_start_process_tick
+00:2258 jump_loop_process_buffered_ticks
+;; 00:2263:op AUDENA_ON
+;; 00:2265:op rAUDENA
+;; 00:2269:op rAUDVOL
 ;; 00:2273:op BANK(call_02_701d)
 ;; 00:227a:op BANK(call_02_701d)
 ;; 00:227f:op call_02_701d
@@ -1062,22 +1066,29 @@
 ;; 00:228b:op BANK(call_1b_5b7a)
 ;; 00:2292:op BANK(call_1b_5b7a)
 ;; 00:229e:op call_1b_5b7a
+;; 00:22b9:op _SYNC_ANALOG_OUT
+00:22c1 .jump_skip_analog_out
+;; 00:22c1:op BANK(call_manage_update_audio_tick)
+;; 00:22c8:op BANK(call_manage_update_audio_tick)
+;; 00:22ca:op call_manage_update_audio_tick
 
-;; 00:22c1:op BANK(call_update_audio_tick)
-;; 00:22c8:op BANK(call_update_audio_tick)
-;; 00:22ca:op call_update_audio_tick
+00:22d4 .jump_skip_update_audio_tick
 
 ;; 00:22dc:op rSC
+00:22e9 .jump_send_sync
+00:22ec .jump_skip_sync
 
 00:22fc jump_return_tick_processing
 
-00:2300 call_00_2300
+00:2300 call_receive_tick_from_sync
 
 ;; 00:2305:op _SYNC_LSDJ
 
 ;; 00:235f:op BANK(call_1c_72bf)
 ;; 00:2366:op BANK(call_1c_72bf)
 ;; 00:2368:op call_1c_72bf
+
+00:2378 jump_trigger_tick_external_clock
 
 00:237d call_sync_analog_in
 ;; 00:2380:op rSB
@@ -3398,9 +3409,9 @@
 
 01:7c94 call_01_7c94
 01:7c94 .code:0163
-;; 01:7ca3:op rNR52
+;; 01:7ca3:op rAUDENA
 ;; 01:7ca5:op rNR51
-;; 01:7ca7:op rNR50
+;; 01:7ca7:op rAUDVOL
 ;; 01:7caa:op rRAMG
 ;; 01:7cad:op CART_SRAM_ENABLE
 ;; 01:7caf:op rRAMB
@@ -3749,7 +3760,7 @@
 02:4a1a .jump_is_pu1_no_transpose
 02:4a1b .jump_keep_pu2_transpose
 02:4a22 .jump_no_carry_pitch_LUT
-02:4a30 jump_skip_reset_current_note
+02:4a30 .jump_skip_reset_current_note
 ;; 02:4a33:op _SYNC_KEYBOARD
 02:4a43 .jump_keyboard_always_reset
 ;; 02:4a46:op LOW(PU1_VIBRATO_SPEED_HIGH)
@@ -3778,8 +3789,10 @@
 02:4b20 .jump_no_carry_drum_pitch_lut
 02:4b2e .jump_skip_drum_pitch_2
 02:4b40 .jump_skip_reset_finetune
-02:4b5b jump_decrease_countdown_and_return
-02:4b64 jump_is_kit
+02:4b45 .jump_skip_note_logic
+02:4b5b .jump_decrease_countdown_and_return
+02:4b64 .jump_is_kit
+02:4b75 .jump_skip_kit1
 
 02:4b8a call_write_current_channel_chain_transpose
 ;; 02:4b8a Write the current transpose for the playing channel chain row.
@@ -4094,8 +4107,10 @@
 02:54a1 call_02_54a1
 02:54a1 .code:0093
 
-02:5534 call_update_audio_tick
+02:5534 call_manage_update_audio_tick
 02:5534 .code:0044
+02:553a .jump_loop_nudge_tempo_forward
+02:5548 .jump_return_nudge_tempo_backward
 
 02:5578 call_02_5578
 
@@ -4292,9 +4307,9 @@
 02:5f88 .code:001c
 
 02:5fa4 call_02_5fa4
-;; 02:5fa7:op rNR52
+;; 02:5fa7:op rAUDENA
 
-;; 02:5fcb:op rNR50
+;; 02:5fcb:op rAUDVOL
 02:5fcf call_set_channel_registers
 02:5fdc call_set_noi_registers
 ;; 02:5fe1:op rNR41
@@ -4343,12 +4358,12 @@
 02:620e call_apply_M_command
 02:620e .code:0233
 ;; 02:620e First, handle the left channel
-;; 02:620e:op rNR50
+;; 02:620e:op rAUDVOL
 ;; 02:6211:op MASTER_VOLUME_OFFSET_LUT
 ;; 02:6223 Repeat process with right channel
-;; 02:6223:op rNR50
-;; 02:6232:op rNR50
-;; 02:6235:op rNR50
+;; 02:6223:op rAUDVOL
+;; 02:6232:op rAUDVOL
+;; 02:6235:op rAUDVOL
 02:6238 jump_P_command_step_mode
 ;; 02:625f:op LOW(PU1_PITCH_PERIOD_LOW)
 ;; 02:6263:op HIGH(PU1_PITCH_PERIOD_LOW)
@@ -4810,7 +4825,7 @@
 ;; 02:76f9:op LOW(PHRASE_COMMAND_VALUES)
 ;; 02:76fd:op HIGH(PHRASE_COMMAND_VALUES)
 
-02:7712 call_02_7712
+02:7712 call_update_audio_tick
 02:7712 .code:007f
 ;; 02:7723:op rDIV
 
@@ -4818,7 +4833,7 @@
 
 ;; 02:7798:op LOW(ram_00_c304)
 ;; 02:779c:op HIGH(ram_00_c304)
-;; 02:77b8:op rNR52
+;; 02:77b8:op rAUDENA
 ;; 02:77ca:op LOW(LIVE_NEXT_SONG_ROWS)
 ;; 02:77ce:op HIGH(LIVE_NEXT_SONG_ROWS)
 
@@ -4869,7 +4884,7 @@
 ;; 02:7b57:op HIGH(PLAYING_PHRASES)
 
 02:7b9b call_02_7b9b
-;; 02:7bb9:op rNR52
+;; 02:7bb9:op rAUDENA
 ;; 02:7bca:op LOW(ARE_CHANNELS_PLAYING)
 ;; 02:7bce:op HIGH(ARE_CHANNELS_PLAYING)
 
@@ -10087,7 +10102,7 @@
 
 1c:5098 call_1c_5098
 1c:5098 .code:001b
-;; 1c:50ac:op rNR52
+;; 1c:50ac:op rAUDENA
 ;; 1c:509b:op _INTERRUPT_ENABLE
 
 1c:50b3 call_1c_50b3
@@ -13490,14 +13505,14 @@
 
 00:c4be ram_00_c4be
 
-00:c4ce ram_00_c4ce
+00:c4ce START_PLAYING_SIGNAL
 
 00:c4cf ram_00_c4cf
 
 00:c4d0 ram_00_c4d0
 00:c4d1 ram_00_c4d1
 00:c4d2 ram_00_c4d2
-00:c4d3 ram_00_c4d3
+00:c4d3 IS_PLAYING
 
 00:c4d4 PU2_INSTRUMENT_TRANSPOSE
 00:c4d5 KIT_1_SAMPLE_ADDRESS_START_LOW
@@ -13952,7 +13967,7 @@
 
 00:c9a0 ram_00_c9a0
 00:c9a1 ram_00_c9a1
-00:c9a2 ram_00_c9a2
+00:c9a2 PROJECT_SCREEN_CURSOR_ROW
 00:c9a3 ram_00_c9a3
 
 00:c9a4 ram_00_c9a4
@@ -14081,13 +14096,13 @@
 
 00:cb68 ram_00_cb68
 00:cb69 ram_00_cb69
-00:cb6a ram_00_cb6a
+00:cb6a IS_LSDJ_MASTER
 00:cb6b ram_00_cb6b
 
 00:cb6c ram_00_cb6c
 00:cb6d CLOCK_SOURCE
-00:cb6e ram_00_cb6e
-00:cb6f ram_00_cb6f
+00:cb6e TEMPO_FOLLOW_NUDGE_BACKWARD
+00:cb6f TEMPO_FOLLOW_NUDGE_FORWARD
 
 00:cb70 ram_00_cb70
 00:cb71 NB_TICKS_CURRENTLY_PROCESSING
